@@ -1,0 +1,83 @@
+.kt-button {
+  cursor: pointer;
+  padding: 0 12px;
+  transition: all ease-in-out 0.3s;
+  border-radius: 3px;
+  overflow: hidden;
+  font-size: 14px;
+  text-align: center;
+
+
+  &.primary {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    &:active {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  &.success {
+    background-color: rgba(24, 241, 146, .9);
+    color: rgba(0, 0, 0, .9);
+
+    &:hover {
+      background-color: rgba(24, 241, 146, 1);
+    }
+
+    &:active {
+      background-color: rgba(24, 241, 146, .8);
+    }
+  }
+
+  &.warning {
+    background-color: rgba(255, 152, 0, .9);
+    color: #ffffff;
+
+    &:hover {
+      background-color: rgba(255, 152, 0, 1);
+    }
+
+    &:active {
+      background-color: rgba(255, 152, 0, .8);
+    }
+  }
+
+  &.danger {
+    background-color: rgba(244, 57, 64, .8);
+    color: #ffffff;
+
+    &:hover {
+      background-color: rgba(244, 57, 64, 1);
+    }
+
+    &:active {
+      background-color: rgba(244, 57, 64, .7);
+    }
+  }
+
+  &.block {
+    width: 100%;
+    flex: 1;
+  }
+
+  &.small {
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+  }
+
+  &.medium {
+    height: 32px;
+    line-height: 32px;
+  }
+
+  &.large {
+    height: 40px;
+    line-height: 40px;
+  }
+}

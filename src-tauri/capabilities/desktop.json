@@ -1,0 +1,50 @@
+{
+  "identifier": "desktop",
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "webviews": [
+    "novel",
+    "setting"
+  ],
+  "windows": [
+    "novel",
+    "setting"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-set-position",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-minimize",
+    "core:window:allow-close",
+    "core:event:allow-listen",
+    "core:event:allow-emit",
+    "shell:allow-open",
+    "fs:default",
+    "fs:allow-exists",
+    "fs:allow-mkdir",
+    "fs:allow-open",
+    "fs:allow-fstat",
+    "fs:allow-ftruncate",
+    "fs:allow-write",
+    "fs:allow-read",
+    "fs:allow-seek",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:scope-appconfig-recursive",
+    "global-shortcut:allow-is-registered",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister",
+    "global-shortcut:allow-register-all",
+    "global-shortcut:allow-unregister-all",
+    "dialog:allow-open",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$APPCONFIG/**"
+        }
+      ]
+    }
+  ]
+}

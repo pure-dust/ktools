@@ -1,0 +1,77 @@
+@height: 32px;
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    height: @height;
+    display: flex;
+    justify-content: flex-end;
+    color: #fff;
+    font-size: 12px;
+    align-items: center;
+    user-select: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+
+    .icon {
+      height: 100%;
+      line-height: @height;
+      cursor: pointer;
+      min-width: 48px;
+      padding: 0 6px;
+      text-align: center;
+      transition: all ease-in-out .2s;
+    }
+
+    .min {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .close {
+      &:hover {
+        background-color: rgba(255, 0, 0, 0.3);
+      }
+    }
+  }
+
+  @property --scroll-bg {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(0, 0, 0, 0) ;
+  }
+
+  .body {
+    flex: 1;
+    height: 0;
+    overflow: auto;
+    padding: 16px;
+    transition: --scroll-bg linear .2s;
+
+    &:hover {
+      --scroll-bg: rgba(0, 0, 0, .2);
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+      background-color: var(--scroll-bg);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: 8px;
+      height: 8px;
+      background-color: var(--scroll-bg);
+      border-radius: 4px;
+    }
+  }
+
+  .footer {
+    height: 0;
+  }
+}
