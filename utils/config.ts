@@ -24,6 +24,7 @@ export class ConfigManager<T> extends EventEmitter<any> {
   private isInit = false
   private file: FileHandle | undefined
   private readonly encoder = new TextEncoder()
+  private isSync: boolean = false
 
   constructor(file_name: string, defaultConfig: object) {
     super()
@@ -52,6 +53,8 @@ export class ConfigManager<T> extends EventEmitter<any> {
       if (equals(this.get(payload.key), payload.newValue)) {
         return
       }
+      console.log('listen')
+      this.isSync = true
       await this.update(payload.key, payload.newValue)
     })
   }
@@ -64,15 +67,18 @@ export class ConfigManager<T> extends EventEmitter<any> {
     }
     let origin = JSON.parse(await readTextFile(this.file_name, {baseDir: this.base}))
     this.config = deep_proxy(origin, async (target, key, newValue, oldValue) => {
-      await this.write()
-      await emit("config-update", {
-        target,
-        key,
-        newValue,
-        oldValue,
-        label: getCurrentWindow().label,
-        manage: this.file_name
-      })
+      if (!this.isSync) {
+        await emit("config-update", {
+          target,
+          key,
+          newValue,
+          oldValue,
+          label: getCurrentWindow().label,
+          manage: this.file_name
+        })
+        await this.write()
+      }
+      this.isSync = false
       this.emit(key, [target, key, newValue, oldValue])
     })
   }
