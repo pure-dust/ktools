@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {getCurrentWindow, PhysicalPosition} from "@tauri-apps/api/window";
 import {open} from "@tauri-apps/plugin-dialog"
 import {hotkey} from "~utils/hotkey.ts";
@@ -20,6 +20,24 @@ const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'P
   }
 }
 
+const novelEventWrapper = (fn: Function) => {
+  return shortcutWrapper(async () => {
+    if (!cache.get('novel.last')) {
+      return
+    }
+    fn()
+    await updateCache()
+  }, 'Pressed')
+}
+
+const updateCache = async () => {
+  await cache.update(`novel.list.${filename(novel.path)}`, {
+    path: novel.path,
+    chapter: novel.chapter,
+    line: novel.line,
+  })
+}
+
 export function Novel() {
   const [text, setText] = useState<string>(cache.get('novel.last'))
   const [color, setColor] = useState<string>(config.get('novel.font_color'))
@@ -27,24 +45,6 @@ export function Novel() {
 
   const currentWindow = useMemo(() => {
     return getCurrentWindow()
-  }, [])
-
-  const updateCache = useCallback(async () => {
-    await cache.update(`novel.list.${filename(novel.path)}`, {
-      path: novel.path,
-      chapter: novel.chapter,
-      line: novel.line,
-    })
-  }, [])
-
-  const novelEventWrapper = useCallback((fn: Function) => {
-    return shortcutWrapper(async () => {
-      if (!cache.get('novel.last')) {
-        return
-      }
-      fn()
-      await updateCache()
-    }, 'Pressed')
   }, [])
 
   const hotkeyCallback = useMemo(() => {
@@ -107,16 +107,11 @@ export function Novel() {
         line: cacheItem?.line ?? -1
       })
       if (!cacheItem) {
-        await cache.update('novel', {
-          last: filename(result),
-          list: {
-            [filename(result)]: {
-              path: result,
-              chapter: 0,
-              line: 0,
-            },
-            ...cache.get<object>('novel.list')
-          }
+        await cache.update('novel.last', filename(result))
+        await cache.update(`novel.list.${filename(result)}`, {
+          path: result,
+          chapter: 0,
+          line: 0,
         })
       }
     }).then()

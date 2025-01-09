@@ -43,6 +43,9 @@ export class ConfigManager<T> extends EventEmitter<any> {
 
   private async register_event() {
     await listen<UpdateParams>("config-update", async ({payload}) => {
+      if (payload.label === getCurrentWindow().label) {
+        return
+      }
       if (payload.manage !== this.file_name) {
         return
       }
