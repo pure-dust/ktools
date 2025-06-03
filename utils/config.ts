@@ -83,6 +83,10 @@ export class ConfigManager<T> extends EventEmitter<any> {
     })
   }
 
+  async reload() {
+    await this.load_file()
+  }
+
   async init() {
     if (this.isInit) return
     await this.load_file()
