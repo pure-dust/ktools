@@ -9,19 +9,19 @@ importers:
   .:
     dependencies:
       '@tauri-apps/api':
-        specifier: 2.5.0
+        specifier: ^2.5.0
         version: 2.5.0
       '@tauri-apps/plugin-dialog':
-        specifier: 2.2.2
+        specifier: ^2.2.2
         version: 2.2.2
       '@tauri-apps/plugin-fs':
-        specifier: 2.3.0
+        specifier: ^2.3.0
         version: 2.3.0
       '@tauri-apps/plugin-global-shortcut':
-        specifier: 2.2.1
+        specifier: ^2.2.1
         version: 2.2.1
       '@tauri-apps/plugin-shell':
-        specifier: 2.2.1
+        specifier: ^2.2.1
         version: 2.2.1
       rc-dialog:
         specifier: ^9.6.0
