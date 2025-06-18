@@ -86,12 +86,16 @@ export class ConfigManager<T> extends EventEmitter<any> {
         })
     }
 
-    async init() {
-        if (this.isInit) return
-        await this.load_file()
-        await this.register_event()
-        this.isInit = true
-    }
+  async reload() {
+    await this.load_file()
+  }
+
+  async init() {
+    if (this.isInit) return
+    await this.load_file()
+    await this.register_event()
+    this.isInit = true
+  }
 
     async update(key: string, value: any) {
         let keys = key.split(".")
