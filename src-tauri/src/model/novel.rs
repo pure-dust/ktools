@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, OnceLock};
 
 #[derive(Deserialize)]
 pub struct NovelConfig {
@@ -19,24 +19,22 @@ pub struct Novel {
     chapter: Vec<String>,
     regex: String,
 }
-static mut INSTANCE: Option<Arc<Mutex<Novel>>> = None;
+static INSTANCE: OnceLock<Arc<Mutex<Novel>>> = OnceLock::new();
 const DEFAULT_REGEXP: &str = r"第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*";
 
 impl Novel {
     pub fn new() -> Arc<Mutex<Novel>> {
-        unsafe {
-            INSTANCE
-                .get_or_insert_with(|| {
-                    Arc::new(Mutex::new(Novel {
-                        title: String::from(""),
-                        path: String::from(""),
-                        content: HashMap::new(),
-                        chapter: Vec::new(),
-                        regex: r"第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*".to_string(),
-                    }))
-                })
-                .clone()
-        }
+        INSTANCE
+            .get_or_init(|| {
+                Arc::new(Mutex::new(Novel {
+                    title: String::from(""),
+                    path: String::from(""),
+                    content: HashMap::new(),
+                    chapter: Vec::new(),
+                    regex: r"第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*".to_string(),
+                }))
+            })
+            .clone()
     }
 
     pub fn set_regex(&mut self, regexp: String) {
@@ -72,13 +70,13 @@ impl Novel {
                             }
                         }
                         Err(_err) => {
-                            println!("Error reading line {}", _err );
+                            println!("Error reading line {}", _err);
                         }
                     }
                 }
             }
             Err(_err) => {
-                println!("Error reading file {}", _err );
+                println!("Error reading file {}", _err);
             }
         }
         if !title.is_empty() && !chapter.is_empty() {
@@ -95,7 +93,6 @@ impl Novel {
         self.content.get(&title).unwrap().to_string()
     }
 }
-
 
 fn get_filename(url: &str) -> Option<String> {
     Path::new(&url)

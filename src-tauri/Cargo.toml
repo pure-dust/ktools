@@ -15,16 +15,16 @@ name = "ktools_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.3", features = [] }
+tauri-build = { version = "2.2.0", features = [] }
 
 [dependencies]
-tauri = { version = "2.1.1", features = ["tray-icon", "image-ico"] }
-tauri-plugin-shell = "2"
-tauri-plugin-single-instance = "2"
-tauri-plugin-fs = "2"
-tauri-plugin-global-shortcut = "2.0.1"
-tauri-plugin-dialog = "2"
-tauri-plugin-window-state = "2"
+tauri = { version = "2.5.1", features = ["tray-icon", "image-ico"] }
+tauri-plugin-shell = "2.2.1"
+tauri-plugin-single-instance = "2.2.4"
+tauri-plugin-fs = "2.3.0"
+tauri-plugin-global-shortcut = "2.2.1"
+tauri-plugin-dialog = "2.2.2"
+tauri-plugin-window-state = "2.2.2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 regex = "1.11.1"

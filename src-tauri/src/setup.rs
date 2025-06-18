@@ -187,7 +187,7 @@ fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
     let tray = TrayIconBuilder::new()
         .icon(Image::from_path(icon_path).unwrap())
         .menu(&menu)
-        .menu_on_left_click(false)
+        .show_menu_on_left_click(false)
         .on_menu_event(on_menu_event)
         .on_tray_icon_event(move |_, event| {
             if let TrayIconEvent::Click {
