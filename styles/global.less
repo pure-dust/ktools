@@ -16,3 +16,32 @@ html, body, #root {
   height: 100%;
 }
 
+@property --scroll-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(0, 0, 0, 0) ;
+}
+
+
+.scroller {
+
+  transition: --scroll-bg linear .2s;
+
+  &:hover {
+    --scroll-bg: rgba(0, 0, 0, .2);
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: var(--scroll-bg);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 8px;
+    height: 8px;
+    background-color: var(--scroll-bg);
+    border-radius: 4px;
+  }
+}

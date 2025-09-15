@@ -11,6 +11,7 @@ use tauri::{App, AppHandle, Emitter, Listener, Manager, PhysicalSize, Theme, Web
 #[derive(Debug, serde::Deserialize)]
 struct TooltipPayload {
     name: String,
+    title: String,
     chapter: usize,
     line: usize,
 }
@@ -218,7 +219,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         let tooltip = format!(
             "书名: {}\n章节: {}\n行数: {}\n进度: {}%",
             data.name,
-            data.chapter,
+            data.title,
             data.line,
             format!("{:.2}", process)
         );

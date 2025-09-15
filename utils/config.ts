@@ -65,10 +65,9 @@ export class ConfigManager<T> extends EventEmitter<any> {
         if (info.size === 0) {
             await this.write(true)
         }
-        // @ts-ignore
-        let content: Uint8Array = await readTextFile(this.file_name, {baseDir: this.base})
+        let content = await readTextFile(this.file_name, {baseDir: this.base})
         // let origin = JSON.parse(await readTextFile(this.file_name, {baseDir: this.base}))
-        let origin = JSON.parse(new TextDecoder().decode(content))
+        let origin = JSON.parse(content)
         this.config = deep_proxy(origin, async (target, key, newValue, oldValue) => {
             if (!this.isSync) {
                 await emit("config-update", {

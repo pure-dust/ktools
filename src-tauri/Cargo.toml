@@ -1,7 +1,7 @@
 [package]
 name = "ktools"
 version = "0.1.0"
-description = "A Tauri App"
+description = "novel reader by kamilee"
 authors = ["you"]
 edition = "2021"
 

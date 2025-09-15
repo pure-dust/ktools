@@ -101,6 +101,7 @@ export function Novel() {
       path: cacheItem.path,
       chapter: cacheItem.chapter,
       line: cacheItem.line,
+      count: config.get('novel.count')
     })
     setText(filename(novel.path))
   }, [])
@@ -122,7 +123,8 @@ export function Novel() {
       await novel.init({
         path: result,
         chapter: cacheItem?.chapter ?? -1,
-        line: cacheItem?.line ?? -1
+        line: cacheItem?.line ?? -1,
+        count: config.get('novel.count'),
       })
       await cache.update('novel.last', filename(result))
       if (!cacheItem) {

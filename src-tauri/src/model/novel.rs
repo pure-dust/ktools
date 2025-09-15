@@ -2,7 +2,7 @@ use regex::Regex;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Error};
 use std::path::Path;
 use std::sync::{Arc, Mutex, OnceLock};
 
@@ -41,7 +41,7 @@ impl Novel {
         self.regex = regexp
     }
 
-    pub fn decode(&mut self, path: String) {
+    pub fn decode(&mut self, path: String) -> Result<(), Error> {
         self.chapter.clear();
         self.content.clear();
         self.path = path.clone();
@@ -65,24 +65,27 @@ impl Novel {
                                     title = format!("{}\n", content);
                                     chapter.clear();
                                 }
-                            } else if !title.is_empty() {
+                            } else if !title.is_empty() && content.trim().len() > 0 {
                                 chapter.push_str(&format!("{}\n", content));
                             }
                         }
                         Err(_err) => {
                             println!("Error reading line {}", _err);
+                            return Err(_err);
                         }
                     }
                 }
             }
             Err(_err) => {
                 println!("Error reading file {}", _err);
+                return Err(_err);
             }
         }
         if !title.is_empty() && !chapter.is_empty() {
             self.chapter.push(title.clone());
             self.content.insert(title, chapter);
         }
+        Ok(())
     }
 
     pub fn chapter(&self) -> Vec<String> {
@@ -90,7 +93,10 @@ impl Novel {
     }
 
     pub fn single(&self, title: String) -> String {
-        self.content.get(&title).unwrap().to_string()
+        self.content
+            .get(&title)
+            .unwrap_or(&String::from(""))
+            .clone()
     }
 }
 

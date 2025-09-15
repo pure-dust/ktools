@@ -5,7 +5,7 @@
   "identifier": "com.ktools.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
-    "devUrl": "http://localhost:1420/pages/main/index.html",
+    "devUrl": "http://localhost:52034/pages/main/index.html",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
@@ -20,6 +20,16 @@
     "resources": [
       "icons/icon.ico"
     ],
+    "windows": {
+      "wix": {
+        "language": "zh-CN"
+      },
+      "nsis": {
+        "languages": [
+          "SimpChinese"
+        ]
+      }
+    },
     "active": true,
     "targets": "all",
     "icon": [

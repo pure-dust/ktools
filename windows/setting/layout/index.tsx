@@ -35,7 +35,7 @@ export default function Layout() {
         <span className={'min icon'} onClick={minimize}>最小化</span>
         <span className={'close icon'} onClick={close}>关闭</span>
       </div>
-      <div className="body">
+      <div className="body scroller">
         <Outlet/>
       </div>
       <div className="footer"></div>

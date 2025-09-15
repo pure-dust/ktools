@@ -3,14 +3,16 @@ use std::fs::{metadata, remove_dir, remove_file};
 use std::path::Path;
 
 #[tauri::command(async)]
-pub fn init(config: NovelConfig) -> Vec<String> {
+pub fn init(config: NovelConfig) -> Result<Vec<String>, String> {
     let instance = Novel::new();
     let mut novel = instance.lock().unwrap();
     if config.regexp.is_some() {
         novel.set_regex(config.regexp.unwrap())
     }
-    novel.decode(config.path);
-    novel.chapter()
+    match novel.decode(config.path) {
+        Ok(_) => Ok(novel.chapter()),
+        Err(err) => Err(err.to_string()),
+    }
 }
 
 #[tauri::command]
