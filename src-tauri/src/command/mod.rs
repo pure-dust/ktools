@@ -1,6 +1,12 @@
 use crate::model::novel::{Novel, NovelConfig};
+use rdev::{listen, Button, EventType};
 use std::fs::{metadata, remove_dir, remove_file};
 use std::path::Path;
+use std::sync::atomic::AtomicBool;
+use std::sync::Mutex;
+use tauri::Emitter;
+
+static SCROLL: Mutex<AtomicBool> = Mutex::new(AtomicBool::new(false));
 
 #[tauri::command(async)]
 pub fn init(config: NovelConfig) -> Result<Vec<String>, String> {
@@ -33,4 +39,32 @@ pub fn remove(path: String) -> bool {
     } else {
         false
     }
+}
+
+#[tauri::command]
+pub fn start_mouse_wheel(webview_window: tauri::WebviewWindow) {
+    if SCROLL
+        .lock()
+        .unwrap()
+        .load(std::sync::atomic::Ordering::Relaxed)
+    {
+        return;
+    } else {
+        SCROLL
+            .lock()
+            .unwrap()
+            .store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+    tauri::async_runtime::spawn(async move {
+        listen(move |event| match event.event_type {
+            EventType::Wheel { delta_y, .. } => {
+                if delta_y > 0 || delta_y < 0 {
+                    webview_window.emit("scroll", delta_y).unwrap()
+                }
+            }
+            EventType::ButtonRelease(Button::Middle) => webview_window.emit("hide", ()).unwrap(),
+            _ => {}
+        })
+            .unwrap_err();
+    });
 }
