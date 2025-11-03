@@ -30,7 +30,7 @@ mod tests {
     fn it_works() {
         let instance = model::novel::Novel::new();
         let mut novel = instance.lock().unwrap();
-        novel.decode("C:\\Users\\93218\\Documents\\novel\\混沌小世界.txt".to_string());
+        novel.decode("C:\\Users\\93218\\Documents\\novel\\混沌小世界.txt".to_string()).unwrap();
         novel.chapter();
         println!("{:?}", novel.chapter())
     }

@@ -11,7 +11,8 @@ interface NovelConfig extends Record<string, any> {
   font_size: number
   regexp: string
   regexp_options: string[]
-    count: number
+  count: number
+  use_scroll: boolean
 }
 
 interface ShortcutConfig extends Record<string, any> {

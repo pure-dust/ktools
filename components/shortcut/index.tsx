@@ -1,4 +1,4 @@
-import {FocusEvent, KeyboardEvent, useEffect, useMemo, useRef, useState} from "react";
+import {FocusEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
 import './index.less'
 import {decodeKey, parseKey} from "~utils/hotkey.ts";
 
@@ -9,19 +9,10 @@ interface ShortcutProps {
 
 export function Shortcut(props: ShortcutProps) {
   const [value, setValue] = useState(props.defaultValue || "")
-  const [isEdit, setIsEdit] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const platformKeys = useRef<string[]>([])
   const rustKeys = useRef<string[]>([])
   const downKeys = useRef(new Set<string>())
-
-  const className = useMemo(() => {
-    const classNames = ["kt-shortcut kt-input-cmp"]
-    if (isEdit) {
-      classNames.push("active")
-    }
-    return classNames.join(" ")
-  }, [isEdit])
 
   useEffect(() => {
     let keys = props.defaultValue?.split("+")
@@ -39,11 +30,9 @@ export function Shortcut(props: ShortcutProps) {
 
   const onClick = () => {
     inputRef.current!.focus()
-    setIsEdit(true)
   }
 
   const onBlur = (_e: FocusEvent) => {
-    setIsEdit(false)
     setValue(platformKeys.current.join("  +  "))
     props.onChange?.(rustKeys.current.join("+"))
   }
@@ -80,8 +69,9 @@ export function Shortcut(props: ShortcutProps) {
   }
 
   return (
-    <div className={className} onClick={onClick}>
-      <input className={"kt-shortcut-inner"} ref={inputRef} onBlur={onBlur} value={value || ""} onKeyDown={onKeyDown}
+    <div className={'kt-shortcut kt-input-cmp'} onClick={onClick}>
+      <input className={"kt-shortcut-inner"} ref={inputRef} onBlur={onBlur} value={value || ""}
+             onKeyDown={onKeyDown}
              onChange={() => {
              }}/>
     </div>
