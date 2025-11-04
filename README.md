@@ -1,7 +1,13 @@
-# Tauri + React + Typescript
+# ktools
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+一款用于上班摸鱼看小说的tauri跨平台应用
 
-## Recommended IDE Setup
+## 功能介绍
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+![本体](./static/ScreenShot_2025-11-04_103059_909.png)
+
+![设置](./static/ScreenShot_2025-11-04_103116_475.png)
+
+![设置](./static/ScreenShot_2025-11-04_103126_542.png)
+
+![设置](./static/ScreenShot_2025-11-04_103139_406.png)
