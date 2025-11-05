@@ -6,7 +6,6 @@
   position: relative;
 
   &-label {
-    position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
@@ -15,15 +14,23 @@
   }
 
   &-tip {
-    flex: 1;
+    width: 50%;
+    height: 100%;
     font-size: 14px;
     font-family: zcoo, serif;
+    transition: all ease-in-out 0.3s;
+    transform: translateX(100%);
+    color: #ffffff;
+    opacity: 0.36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    &.inactive {
-      color: rgb(126, 126, 126);
+    &.active {
+      transform: translateX(0);
+      opacity: 1;
     }
   }
-
 
   &-button {
     width: 50%;
@@ -31,10 +38,10 @@
     background: rgb(94, 94, 94);
     border-radius: 3px;
     transition: all ease-in-out 0.3s;
-    transform: translateX(0);
+    transform: translateX(-100%);
 
     &.active {
-      transform: translateX(100%);
+      transform: translateX(0%);
       background: rgb(205, 206, 208);
     }
   }
