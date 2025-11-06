@@ -9,13 +9,17 @@ import {listen} from "@tauri-apps/api/event";
 import {filename} from "~utils/utils.ts";
 import {invoke} from "@tauri-apps/api/core";
 
-type ShortcutWrapper<T extends (...args: any) => any = (...args: any) => any> = (fn: T, type?: 'Released' | 'Pressed' | 'Pressing') => T
+type ShortcutWrapper<T extends (...args: any) => any = (...args: any) => any> = (fn: T, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => T
 
-const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'Pressing') => {
+const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => {
   return (state: 'Released' | 'Pressed' | 'Pressing') => {
-    if (!type) {
+    if (exclude && type !== state) {
       fn()
+    } else if (exclude && type === state) {
+      return
     } else if (type === state) {
+      fn()
+    } else if (!type) {
       fn()
     }
   }
@@ -75,19 +79,19 @@ export function Novel() {
       up: shortcutWrapper(async () => {
         let origin = await currentWindow.outerPosition()
         await currentWindow.setPosition(new PhysicalPosition(origin.x, origin.y - 1))
-      }),
+      }, "Released", true),
       left: shortcutWrapper(async () => {
         let origin = await currentWindow.outerPosition()
         await currentWindow.setPosition(new PhysicalPosition(origin.x - 1, origin.y))
-      }),
+      }, "Released", true),
       right: shortcutWrapper(async () => {
         let origin = await currentWindow.outerPosition()
         await currentWindow.setPosition(new PhysicalPosition(origin.x + 1, origin.y))
-      }),
+      }, "Released", true),
       down: shortcutWrapper(async () => {
         let origin = await currentWindow.outerPosition()
         await currentWindow.setPosition(new PhysicalPosition(origin.x, origin.y + 1))
-      })
+      }, "Released", true)
     }
   }, [])
 

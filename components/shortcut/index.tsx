@@ -1,6 +1,6 @@
 import {FocusEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
 import './index.less'
-import {decodeKey, parseKey} from "~utils/hotkey.ts";
+import {decodeKey, encodeKey} from "~utils/hotkey.ts";
 
 interface ShortcutProps {
   defaultValue?: string
@@ -39,7 +39,7 @@ export function Shortcut(props: ShortcutProps) {
 
   const onKeyDown = (e: KeyboardEvent) => {
     const {code} = e
-    const {platform_key, rust_key} = parseKey(code)
+    const {platform_key, rust_key} = encodeKey(code)
     downKeys.current.add(code)
     if (code === "Escape") {
       // emit("default")
