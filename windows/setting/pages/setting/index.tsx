@@ -6,6 +6,7 @@ import {cache, config} from "~utils/config.ts";
 import {debounce, filename} from "~utils/utils.ts";
 import {useMessage} from "~components/message";
 import {invoke} from "@tauri-apps/api/core";
+import {AppFonts} from "~setting/pages/preview";
 
 export default function Setting() {
   const [visible, setVisible] = useState(false)
@@ -57,6 +58,27 @@ export default function Setting() {
 
     const updateColor = debounce(onChange, 300)
 
+    let option: SelectOption[] | RemoteRequest<SelectOption[]> = []
+    if (item.type === InputType.select) {
+      if (item.option) {
+        option = () => {
+          return new Promise((resolve, reject) => {
+            invoke<string[]>(item.option!).then(res => {
+              resolve(res.concat(AppFonts).map(item => ({
+                label: item,
+                value: item
+              })))
+            }).catch(reject)
+          })
+        }
+      } else {
+        option = config.get<string[]>(`${parent}.${item.prop}_options`).map(item => ({
+          label: item,
+          value: item
+        }))
+      }
+    }
+
     if (item.type === InputType.color) {
       return <ColorPicker defaultValue={config.get(`${parent}.${item.prop}`)}
                           onChange={updateColor}/>
@@ -64,10 +86,7 @@ export default function Setting() {
       return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}/>
     } else if (item.type === InputType.select) {
       return <Select defaultValue={config.get(`${parent}.${item.prop}`)}
-                     options={config.get<string[]>(`${parent}.${item.prop}_options`).map(item => ({
-                       label: item,
-                       value: item
-                     }))} onChange={onChange}/>
+                     options={option} onChange={onChange}/>
     } else if (item.type === InputType.shortcut) {
       return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}/>
     } else if (item.type === InputType.button) {

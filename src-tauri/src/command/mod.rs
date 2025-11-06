@@ -1,4 +1,5 @@
 use crate::model::novel::{Novel, NovelConfig};
+use font_kit::source::SystemSource;
 use rdev::{listen, Button, EventType};
 use std::fs::{metadata, remove_dir, remove_file};
 use std::path::Path;
@@ -67,4 +68,14 @@ pub fn start_mouse_wheel(webview_window: tauri::WebviewWindow) {
         })
             .unwrap_err();
     });
+}
+
+#[tauri::command]
+pub fn get_system_fonts() -> Result<Vec<String>, String> {
+    let source = SystemSource::new();
+    let families = match source.all_families() {
+        Ok(families) => families,
+        Err(e) => return Err(e.to_string()),
+    };
+    Ok(families)
 }

@@ -47,6 +47,7 @@ export function Novel() {
   const [text, setText] = useState<string>(cache.get('novel.last'))
   const [color, setColor] = useState<string>(config.get('novel.font_color'))
   const [fontSize, setFontSize] = useState<number>(config.get('novel.font_size'))
+  const [font, setFont] = useState<string>(config.get('novel.font'))
   const visible = useRef<boolean>(false)
 
   const currentWindow = useMemo(() => {
@@ -125,6 +126,9 @@ export function Novel() {
       config.on('novel.font_size', ([_target, _key, size]) => {
         setFontSize(size)
       })
+      config.on('novel.font', ([_target, _key, font]) => {
+        setFont(font)
+      })
 
       listen('select', async () => {
         let result = await open()
@@ -197,7 +201,7 @@ export function Novel() {
   }, []);
 
   return (
-    <div className={'kt-novel'} style={{color, fontSize}}
+    <div className={'kt-novel'} style={{color, fontSize, fontFamily: font}}
          data-tauri-drag-region={true}>{text}</div>
   )
 }

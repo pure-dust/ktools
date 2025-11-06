@@ -22,13 +22,19 @@ html, body, #root {
   initial-value: rgba(0, 0, 0, 0) ;
 }
 
+@property --thumb-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(0, 0, 0, 0) ;
+}
+
 
 .scroller {
-
   transition: --scroll-bg linear .2s;
 
   &:hover {
     --scroll-bg: rgba(0, 0, 0, .2);
+    --thumb-bg: rgba(0, 0, 0, .2);
   }
 
   &::-webkit-scrollbar {
@@ -39,9 +45,9 @@ html, body, #root {
   }
 
   &::-webkit-scrollbar-thumb {
-    width: 8px;
-    height: 8px;
-    background-color: var(--scroll-bg);
+    width: 12px;
+    min-height: 8px;
+    background-color: var(--thumb-bg);
     border-radius: 4px;
   }
 }

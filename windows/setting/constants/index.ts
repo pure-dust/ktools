@@ -8,6 +8,7 @@ export interface InputItem {
   name: string
   type: InputType
   prop: keyof AppConfig | keyof NovelConfig | keyof ShortcutConfig | keyof OtherConfig
+  option?: string
 }
 
 export enum InputType {
@@ -34,6 +35,7 @@ export const SETTING_CONFIG: ConfigItem[] = [
     name: "小说",
     prop: "novel",
     items: [
+      {name: "字体", type: InputType.select, prop: "font", option: "get_system_fonts"},
       {name: "字体颜色", type: InputType.color, prop: "font_color"},
       {name: "字体大小", type: InputType.number, prop: "font_size"},
       {name: "章节正则", type: InputType.select, prop: "regexp"},
