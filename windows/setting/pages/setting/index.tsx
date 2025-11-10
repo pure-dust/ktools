@@ -81,18 +81,20 @@ export default function Setting() {
 
     if (item.type === InputType.color) {
       return <ColorPicker defaultValue={config.get(`${parent}.${item.prop}`)}
-                          onChange={updateColor}/>
+                          onChange={updateColor} {...(item.other || {})}/>
     } else if (item.type === InputType.number) {
-      return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}/>
+      return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)}
+                          onChange={onChange} {...(item.other || {})}/>
     } else if (item.type === InputType.select) {
       return <Select defaultValue={config.get(`${parent}.${item.prop}`)}
-                     options={option} onChange={onChange}/>
+                     options={option} onChange={onChange} {...(item.other || {})}/>
     } else if (item.type === InputType.shortcut) {
-      return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}/>
+      return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange} {...(item.other || {})}/>
     } else if (item.type === InputType.button) {
-      return (<Button block onClick={() => setVisible(true)}>{item.name}</Button>)
+      return (<Button block onClick={() => setVisible(true)} {...(item.other || {})}>{item.name}</Button>)
     } else if (item.type === InputType.switch) {
-      return (<Switch defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}></Switch>)
+      return (<Switch defaultValue={config.get(`${parent}.${item.prop}`)}
+                      onChange={onChange} {...(item.other || {})}></Switch>)
     }
   }, [])
 

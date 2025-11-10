@@ -9,15 +9,21 @@ interface SelectProps {
   options: SelectOption[] | RemoteRequest<SelectOption[]>
   defaultValue?: string
   onChange?: (value: string) => void
+  select?: boolean
+  placeholder?: string
 }
 
 
 export function Select(props: SelectProps) {
   const dropdownRef = useRef<any>();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [triggerRect, setTriggerRect] = useState<DOMRect | undefined>(undefined);
   const [maxHeight, setMaxHeight] = useState(300); // 默认高度
   const [value, setValue] = useState(props.defaultValue)
   const [options, setOptions] = useState<SelectOption[]>([])
+  const [searchText, setSearchText] = useState<string>('')
+  const [visible, setVisible] = useState<boolean>(false)
 
   useEffect(() => {
     if (Array.isArray(props.options)) {
@@ -63,24 +69,43 @@ export function Select(props: SelectProps) {
   }, []);
 
   const handleVisibleChange = useCallback((visible: boolean) => {
+    setVisible(visible)
     if (visible) {
+      setSearchText("")
+      if (props.select) {
+        inputRef.current?.focus()
+      }
+      setTimeout(() => {
+        menuRef.current?.childNodes.forEach((child) => {
+          if (child.textContent === value) {
+            (child as HTMLElement).scrollIntoView()
+          }
+        })
+      })
       const rect = getTriggerRect();
       setTriggerRect(rect);
       const newMaxHeight = calculateMaxHeight(rect);
       setMaxHeight(newMaxHeight);
     }
-  }, [getTriggerRect, calculateMaxHeight]);
+  }, []);
 
   const onChange = (value: string) => {
     setValue(value)
+    setSearchText("")
+    setVisible(false)
     props.onChange?.(value)
   }
 
   const Overlay = () => {
     return (
       <>
-        <div className="kt-select-overlay" style={{maxHeight: maxHeight + 'px'}}>
-          {options.map((option) => (
+        <div className="kt-select-overlay" style={{maxHeight: maxHeight + 'px'}} ref={menuRef}>
+          <div className={'kt-select-dropdown-item tips'} onClick={() => {
+            setVisible(false)
+            setSearchText("")
+          }}>无选项
+          </div>
+          {options.filter(item => item.label.includes(searchText)).map((option) => (
             <div className={option.value === value ? 'kt-select-dropdown-item selected' : 'kt-select-dropdown-item'}
                  key={option.value} onClick={() => onChange(option.value)}>{option.label}</div>
           ))}
@@ -91,12 +116,18 @@ export function Select(props: SelectProps) {
 
   return (
     <>
-      <DropDown ref={dropdownRef} overlayClassName={'kt-select-dropdown scroller'} trigger={'click'}
+      <DropDown ref={dropdownRef} overlayClassName={'kt-select-dropdown scroller'}
+                trigger={'click'}
                 animation="slide-up" overlay={Overlay}
-                onVisibleChange={handleVisibleChange}>
+                onVisibleChange={handleVisibleChange}
+      >
         <div className={'kt-select kt-input-cmp'}>
-          <input className={'kt-select-inner'} value={value || ""} onChange={() => {
-          }}/>
+          <input ref={inputRef} className={'kt-select-inner'}
+                 value={props.select ? (visible ? searchText : value) : value || ""} readOnly={!props.select}
+                 placeholder={props.select ? (visible ? value : props.placeholder) : props.placeholder}
+                 onInput={(event) => {
+                   setSearchText((event.target as HTMLInputElement).value);
+                 }}/>
         </div>
       </DropDown>
     </>
