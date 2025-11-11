@@ -5,12 +5,14 @@ import './styles/index.less'
 import {Novel} from "./pages/novel";
 import {hotkey} from "~utils/hotkey.ts";
 import {config} from "~utils/config.ts";
+import {pluginLoader} from "~utils/plugin.ts";
 
 preload().then(async () => {
   await hotkey.init(config.get('shortcut'))
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Novel/>
   );
+  pluginLoader.render()
 })
 
 

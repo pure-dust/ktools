@@ -1,0 +1,6 @@
+{
+  "name": "kt-style",
+  "description": "自定义小说样式",
+  "version": "1.0.0",
+  "src": "./style.js"
+}

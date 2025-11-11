@@ -17,9 +17,10 @@
     }
   },
   "bundle": {
-    "resources": [
-      "icons/icon.ico"
-    ],
+    "resources": {
+      "icons/icon.ico": "./icon.ico",
+      "plugins/": "./plugins"
+    },
     "windows": {
       "wix": {
         "language": "zh-CN"

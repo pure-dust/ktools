@@ -5,7 +5,11 @@ use tauri::generate_handler;
 mod command;
 mod model;
 mod setup;
-use command::{chapter, get_system_fonts, init, remove, start_mouse_wheel};
+use command::{
+    novel::{chapter, get_system_fonts, init, remove, start_mouse_wheel},
+    plugin::{get_plugin_file, get_plugin_list},
+    read_file,
+};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -15,7 +19,10 @@ pub fn run() {
             chapter,
             remove,
             start_mouse_wheel,
-            get_system_fonts
+            get_system_fonts,
+            get_plugin_list,
+            get_plugin_file,
+            read_file
         ])
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())

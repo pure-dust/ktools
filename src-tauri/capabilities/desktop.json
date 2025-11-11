@@ -23,6 +23,7 @@
     "fs:default",
     "fs:allow-exists",
     "fs:allow-mkdir",
+    "fs:allow-read-dir",
     "fs:allow-open",
     "fs:allow-fstat",
     "fs:allow-ftruncate",
@@ -43,6 +44,9 @@
       "allow": [
         {
           "path": "$APPCONFIG/**"
+        },
+        {
+          "path": "$RESOURCE/**/*"
         }
       ]
     }

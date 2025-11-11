@@ -117,7 +117,7 @@ fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
     let app_handle = app.handle().clone();
     let icon_path = app
         .path()
-        .resolve("icons/icon.ico", BaseDirectory::Resource)
+        .resolve("icon.ico", BaseDirectory::Resource)
         .unwrap();
     let quit = MenuItem::with_id(&app_handle, "quit", "退出", true, None::<&str>).unwrap();
     let vscode_config = MenuItem::with_id(
