@@ -1,7 +1,7 @@
 import {BaseDirectory} from "@tauri-apps/api/path";
 import default_config from '~assets/default.ts'
 import {FileHandle, open, readTextFile} from "@tauri-apps/plugin-fs";
-import {deep_proxy, equals} from "~utils/utils.ts";
+import {debounce, deep_proxy, equals} from "~utils/utils.ts";
 import {EventEmitter} from "@tauri-apps/plugin-shell";
 import {emit, listen} from "@tauri-apps/api/event";
 import {getCurrentWindow} from "@tauri-apps/api/window";
@@ -25,6 +25,21 @@ export class ConfigManager<T> extends EventEmitter<any> {
   private file: FileHandle | undefined
   private readonly encoder = new TextEncoder()
   private isSync: boolean = false
+  private limitWrite = debounce(async () => {
+    await this.file?.truncate()
+    await this.file?.seek(0, 0)
+    await this.file?.write(this.encoder.encode(JSON.stringify(this.config, undefined, 2)))
+  }, 1000)
+  private limitUpdate = debounce(async (target: object, key: string, newValue: object, oldValue: object) => {
+    await emit("config-update", {
+      target,
+      key,
+      newValue,
+      oldValue,
+      label: getCurrentWindow().label,
+      manage: this.file_name
+    })
+  }, 1000)
 
   constructor(file_name: string, defaultConfig: object) {
     super()
@@ -80,6 +95,7 @@ export class ConfigManager<T> extends EventEmitter<any> {
     await this.file?.write(this.encoder.encode(JSON.stringify(is_default ? this.default_config : this.config, undefined, 2)))
   }
 
+
   private async register_event() {
     await listen<UpdateParams>("config-update", async ({payload}) => {
       if (payload.label === getCurrentWindow().label) {
@@ -111,15 +127,8 @@ export class ConfigManager<T> extends EventEmitter<any> {
     }
     this.config = deep_proxy(origin, async (target, key, newValue, oldValue) => {
       if (!this.isSync) {
-        await emit("config-update", {
-          target,
-          key,
-          newValue,
-          oldValue,
-          label: getCurrentWindow().label,
-          manage: this.file_name
-        })
-        await this.write()
+        await this.limitUpdate(target, key, newValue, oldValue)
+        await this.limitWrite()
       }
       this.isSync = false
       this.emit(key, [target, key, newValue, oldValue])

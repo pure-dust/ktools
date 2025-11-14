@@ -25,14 +25,14 @@ const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'P
   }
 }
 
-const novelEventWrapper = (fn: Function) => {
+const novelEventWrapper = (fn: Function, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => {
   return shortcutWrapper(async () => {
     if (!cache.get('novel.last')) {
       return
     }
     fn()
     await updateCache()
-  }, 'Pressed')
+  }, type || 'Pressed', exclude)
 }
 
 const updateCache = async () => {
@@ -58,16 +58,16 @@ export function Novel() {
     return {
       prev: novelEventWrapper(async () => {
         setText(await novel.prevLine())
-      }),
+      }, "Released", true),
       next: novelEventWrapper(async () => {
         setText(await novel.nextLine())
-      }),
+      }, "Released", true),
       prev_chapter: novelEventWrapper(async () => {
         setText(await novel.prevChapter())
-      }),
+      }, "Released", true),
       next_chapter: novelEventWrapper(async () => {
         setText(await novel.nextChapter())
-      }),
+      }, "Released", true),
       hide: shortcutWrapper(async () => {
         if (await currentWindow.isVisible()) {
           await currentWindow.hide()

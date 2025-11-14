@@ -54,7 +54,6 @@ export function debounce<T extends (...args: any[]) => void>(func: T, wait: numb
   } as T
 }
 
-
 export function equals(a: any, b: any): boolean {
   const equal = (a: any, b: any) => {
     if (typeof a !== typeof b) {
