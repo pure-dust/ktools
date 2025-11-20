@@ -32,7 +32,7 @@ class Novel {
       name: filename(this.config.path),
       chapter: this.currentChapter + 1,
       line: this.currentLine + 1,
-      title: this.chapters[this.currentChapter].trim()
+      title: this.chapters[this.currentChapter]?.trim() || "尚未开始阅读"
     })
   }, 1000)
 
@@ -63,13 +63,15 @@ class Novel {
     }
     this.currentChapter = this.config.chapter
     this.currentLine = this.config.line
+    this.currentContent = ""
+    this.lines = []
     try {
       this.chapters = await invoke("init", {config: {path: this.config.path, regexp: this.config.regexp}})
       if (this.currentLine >= 0 && this.currentChapter >= 0) {
         this.currentContent = await invoke<string>("chapter", {title: this.chapters[this.currentChapter]})
         this.parseChapter()
-        await this.update()
       }
+      await this.update()
     } catch (error) {
       this.error = error as string
       console.error(error);
@@ -127,7 +129,7 @@ class Novel {
     if (this.error) {
       return this.error
     }
-    if (this.currentLine >= this.lines.length - 1 && this.currentChapter < this.chapters.length - 1) {
+    if ((this.currentLine >= this.lines.length - 1 && this.currentChapter < this.chapters.length - 1) || this.currentLine === -1) {
       await this.nextChapter()
     } else {
       this.currentLine++
