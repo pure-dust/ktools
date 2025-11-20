@@ -109,6 +109,16 @@ fn on_menu_event(app: &AppHandle, event: MenuEvent) {
             let setting = create_setting(app).unwrap();
             setting.set_size(PhysicalSize::new(540, 400)).unwrap();
         }
+        "devtool_novel" => {
+            if let Some(novel) = app.get_webview_window("novel") {
+                novel.open_devtools();
+            }
+        }
+        "devtool_setting" => {
+            if let Some(setting) = app.get_webview_window("setting") {
+                setting.open_devtools();
+            }
+        }
         _ => {}
     }
 }
@@ -177,12 +187,36 @@ fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
         true,
         &[&vscode_cache, &notepad_cache, &cache_dir],
     )
+        .unwrap();
+    let devtool_novel = MenuItem::with_id(
+        &app_handle,
+        "devtool_novel",
+        "打开书籍调试工具",
+        true,
+        None::<&str>,
+    )
+        .unwrap();
+    let devtool_setting = MenuItem::with_id(
+        &app_handle,
+        "devtool_setting",
+        "打开设置调试工具",
+        true,
+        None::<&str>,
+    )
+        .unwrap();
+    let devtool = Submenu::with_id_and_items(
+        app.handle(),
+        "devtool",
+        "调试工具",
+        true,
+        &[&devtool_novel, &devtool_setting],
+    )
     .unwrap();
     let select = MenuItem::with_id(&app_handle, "select", "选择书籍", true, None::<&str>).unwrap();
     let reload = MenuItem::with_id(&app_handle, "reload", "重载", true, None::<&str>).unwrap();
     let setting = MenuItem::with_id(&app_handle, "setting", "设置", true, None::<&str>).unwrap();
     let menu = MenuBuilder::new(app)
-        .items(&[&reload, &select, &setting, &config, &cache, &quit])
+        .items(&[&reload, &select, &setting, &config, &cache, &devtool, &quit])
         .build()
         .unwrap();
     let tray = TrayIconBuilder::new()
