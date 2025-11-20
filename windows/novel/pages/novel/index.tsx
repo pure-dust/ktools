@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {getCurrentWindow, PhysicalPosition} from "@tauri-apps/api/window";
+import {getCurrentWindow, PhysicalPosition, PhysicalSize} from "@tauri-apps/api/window";
 import {open} from "@tauri-apps/plugin-dialog"
 import {hotkey} from "~utils/hotkey.ts";
 import {novel} from "~utils/novel.ts";
@@ -44,10 +44,11 @@ const updateCache = async () => {
 }
 
 export function Novel() {
+  const textRef = useRef<HTMLDivElement>(null)
   const [text, setText] = useState<string>(cache.get('novel.last'))
   const [color, setColor] = useState<string>(config.get('novel.font_color'))
   const [fontSize, setFontSize] = useState<number>(config.get('novel.font_size'))
-  const [font, setFont] = useState<string>(config.get('novel.font'))
+  const [fontFamily, setFontFamily] = useState<string>(config.get('novel.font'))
   const visible = useRef<boolean>(false)
 
   const currentWindow = useMemo(() => {
@@ -127,7 +128,7 @@ export function Novel() {
         setFontSize(size)
       })
       config.on('novel.font', ([_target, _key, font]) => {
-        setFont(font)
+        setFontFamily(font)
       })
 
       listen('select', async () => {
@@ -200,8 +201,17 @@ export function Novel() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!textRef.current) {
+      return
+    }
+    getCurrentWindow().setSize(new PhysicalSize(textRef.current.offsetWidth, textRef.current.offsetHeight)).then()
+  }, [fontSize, fontFamily, text]);
+
   return (
-    <div className={'kt-novel'} style={{color, fontSize, fontFamily: font}}
-         data-tauri-drag-region={true}>{text}</div>
+    <>
+      <div className={'kt-novel'} style={{color, fontSize, fontFamily}} ref={textRef}
+           data-tauri-drag-region={true}>{text}</div>
+    </>
   )
 }
