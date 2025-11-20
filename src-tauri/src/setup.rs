@@ -110,19 +110,13 @@ fn on_menu_event(app: &AppHandle, event: MenuEvent) {
             setting.set_size(PhysicalSize::new(540, 400)).unwrap();
         }
         "devtool_novel" => {
-            #[cfg(debug_assertions)]
-            {
-                if let Some(novel) = app.get_webview_window("novel") {
-                    novel.open_devtools();
-                }
+            if let Some(novel) = app.get_webview_window("novel") {
+                novel.open_devtools();
             }
         }
         "devtool_setting" => {
-            #[cfg(debug_assertions)]
-            {
-                if let Some(setting) = app.get_webview_window("setting") {
-                    setting.open_devtools();
-                }
+            if let Some(setting) = app.get_webview_window("setting") {
+                setting.open_devtools();
             }
         }
         _ => {}
