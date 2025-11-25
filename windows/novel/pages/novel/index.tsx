@@ -49,6 +49,7 @@ export function Novel() {
   const [color, setColor] = useState<string>(config.get('novel.font_color'))
   const [fontSize, setFontSize] = useState<number>(config.get('novel.font_size'))
   const [fontFamily, setFontFamily] = useState<string>(config.get('novel.font'))
+  const [useAutosize, setUseAutosize] = useState<boolean>(config.get('novel.use_autosize'))
   const visible = useRef<boolean>(false)
 
   const currentWindow = useMemo(() => {
@@ -130,6 +131,24 @@ export function Novel() {
       config.on('novel.font', ([_target, _key, font]) => {
         setFontFamily(font)
       })
+      config.on("novel.use_autosize", ([_target, _key, use_autosize]) => {
+        if (use_autosize) {
+          currentWindow.setSize(new PhysicalSize(textRef.current!.offsetWidth, textRef.current!.offsetHeight)).then()
+        } else {
+          currentWindow.setSize(new PhysicalSize(config.get('novel.window_width'), config.get('novel.window_height')))
+        }
+        setUseAutosize(use_autosize)
+      })
+      config.on('novel.window_width', ([_target, _key, width]) => {
+        if (!useAutosize) {
+          currentWindow.setSize(new PhysicalSize(width, config.get('novel.window_height')))
+        }
+      })
+      config.on('novel.window_height', ([_target, _key, height]) => {
+        if (!useAutosize) {
+          currentWindow.setSize(new PhysicalSize(config.get('novel.window_width'), height))
+        }
+      })
 
       listen('select', async () => {
         let result = await open()
@@ -190,7 +209,6 @@ export function Novel() {
       }
 
       invoke("start_mouse_wheel").then()
-
     }
 
     initialize().then()
@@ -202,10 +220,10 @@ export function Novel() {
   }, []);
 
   useEffect(() => {
-    if (!textRef.current) {
+    if (!textRef.current || !useAutosize) {
       return
     }
-    getCurrentWindow().setSize(new PhysicalSize(textRef.current.offsetWidth, textRef.current.offsetHeight)).then()
+    currentWindow.setSize(new PhysicalSize(textRef.current.offsetWidth, textRef.current.offsetHeight)).then()
   }, [fontSize, fontFamily, text]);
 
   return (

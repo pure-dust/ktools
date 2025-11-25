@@ -8,6 +8,7 @@ import {hex2hsl} from "~components/color-picker/utils.ts";
 interface ColorPickerProps {
   defaultValue?: string
   onChange?: (color: string) => void
+  disabled?: boolean
 }
 
 export function ColorPicker(props: ColorPickerProps) {
@@ -28,9 +29,20 @@ export function ColorPicker(props: ColorPickerProps) {
     return l > 50 ? "#000000" : "#ffffff"
   }, [color])
 
+  const computedStyle = useMemo(() => {
+    let style = ["kt-color-picker", "kt-input-cmp", "lobster"]
+    if (props.disabled) {
+      style.push("disabled")
+    }
+    return style.join(" ")
+  }, [props.disabled])
+
   return (<>
-    <div className={"kt-color-picker kt-input-cmp lobster"} style={{background: color, color: fontColor}}
-         onClick={() => setVisible(true)}>
+    <div className={computedStyle} style={{background: color, color: fontColor}}
+         onClick={() => {
+           if (props.disabled) return
+           setVisible(true)
+         }}>
       {color}
     </div>
     <Modal visible={visible} onClose={() => setVisible(false)}>

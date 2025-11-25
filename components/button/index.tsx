@@ -7,6 +7,7 @@ interface ButtonProps extends PropsWithChildren {
   size?: "small" | "medium" | "large"
   type?: "primary" | "success" | "danger" | "warning"
   style?: CSSProperties
+  disabled?: boolean
 }
 
 export function Button(props: ButtonProps = {size: 'medium'}) {

@@ -6,6 +6,7 @@ interface SwitchProps {
   inactiveText?: string
   defaultValue?: boolean
   onChange?: (checked: boolean) => void
+  disabled?: boolean
 }
 
 export function Switch(props: SwitchProps) {

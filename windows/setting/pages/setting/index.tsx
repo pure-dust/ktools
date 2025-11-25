@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import './index.less'
-import {InputItem, InputType, SETTING_CONFIG} from '~setting/constants'
+import {InputItem, InputType, useSetting} from '~setting/constants'
 import {Button, ColorPicker, InputNumber, Modal, Select, Shortcut, Switch} from '~components/index'
 import {cache, config} from "~utils/config.ts";
 import {debounce, filename} from "~utils/utils.ts";
@@ -14,6 +14,7 @@ export default function Setting() {
   const [current, setCurrent] = useState<NovelItemCache>()
   const [novelCache, setNovelCache] = useState<NovelCache>(cache.get('novel'))
   const [api, holder] = useMessage()
+  const setting = useSetting()
 
   useEffect(() => {
     const callback = () => {
@@ -81,27 +82,29 @@ export default function Setting() {
 
     if (item.type === InputType.color) {
       return <ColorPicker defaultValue={config.get(`${parent}.${item.prop}`)}
-                          onChange={updateColor} {...(item.other || {})}/>
+                          onChange={updateColor} disabled={item.disabled} {...(item.other || {})}/>
     } else if (item.type === InputType.number) {
       return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)}
-                          onChange={onChange} {...(item.other || {})}/>
+                          onChange={onChange} disabled={item.disabled} {...(item.other || {})} />
     } else if (item.type === InputType.select) {
       return <Select defaultValue={config.get(`${parent}.${item.prop}`)}
-                     options={option} onChange={onChange} {...(item.other || {})}/>
+                     options={option} onChange={onChange} disabled={item.disabled} {...(item.other || {})}/>
     } else if (item.type === InputType.shortcut) {
-      return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange} {...(item.other || {})}/>
+      return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}
+                       disabled={item.disabled} {...(item.other || {})}/>
     } else if (item.type === InputType.button) {
-      return (<Button block onClick={() => setVisible(true)} {...(item.other || {})}>{item.name}</Button>)
+      return (<Button block onClick={() => setVisible(true)}
+                      disabled={item.disabled} {...(item.other || {})}>{item.name}</Button>)
     } else if (item.type === InputType.switch) {
       return (<Switch defaultValue={config.get(`${parent}.${item.prop}`)}
-                      onChange={onChange} {...(item.other || {})}></Switch>)
+                      onChange={onChange} disabled={item.disabled} {...(item.other || {})}></Switch>)
     }
   }, [])
 
   return (
     <>
       <div className={'setting-page'}>
-        {SETTING_CONFIG.map(item => {
+        {setting.map(item => {
           return <div className={'setting-card'} key={item.prop}>
             <div className={'setting-card-title zcoo'}>{item.name}</div>
             <div className={'setting-card-content'}>

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import DropDown from 'rc-dropdown'
 import 'rc-dropdown/assets/index.css'
 import './index.less'
@@ -11,6 +11,7 @@ interface SelectProps {
   onChange?: (value: string) => void
   select?: boolean
   placeholder?: string
+  disabled?: boolean
 }
 
 
@@ -114,15 +115,24 @@ export function Select(props: SelectProps) {
     )
   }
 
+  const computedStyle = useMemo(() => {
+    let style = ["kt-select", "kt-input-cmp"]
+    if (props.disabled) {
+      style.push("disabled")
+    }
+    return style.join(" ")
+  }, [props.disabled])
+
   return (
     <>
       <DropDown ref={dropdownRef} overlayClassName={'kt-select-dropdown scroller'}
-                trigger={'click'}
+                trigger={props.disabled ? [] : 'click'}
                 animation="slide-up" overlay={Overlay}
-                onVisibleChange={handleVisibleChange}
+                onVisibleChange={props.disabled ? undefined : handleVisibleChange}
       >
-        <div className={'kt-select kt-input-cmp'}>
+        <div className={computedStyle}>
           <input ref={inputRef} className={'kt-select-inner'}
+                 disabled={props.disabled}
                  value={props.select ? (visible ? searchText : value) : value || ""} readOnly={!props.select}
                  placeholder={props.select ? (visible ? value : props.placeholder) : props.placeholder}
                  onInput={(event) => {

@@ -8,6 +8,9 @@ export default <Config>{
     regexp_options: ["第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*"],
     count: 20,
     use_scroll: true,
+    use_autosize: true,
+    window_width: 240,
+    window_height: 20
   },
   shortcut: {
     prev: "NumpadSubtract",

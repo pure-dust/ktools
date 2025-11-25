@@ -1,10 +1,11 @@
 import './index.less'
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useMemo, useState} from "react";
 
 
 interface InputNumberProps {
   defaultValue?: number
   onChange?: (value: number) => void
+  disabled?: boolean
 }
 
 export function InputNumber(props: InputNumberProps) {
@@ -15,8 +16,16 @@ export function InputNumber(props: InputNumberProps) {
     props.onChange?.(+e.target.value)
   }
 
+  const computedStyle = useMemo(() => {
+    let style = ["kt-input-number", "kt-input-cmp"]
+    if (props.disabled) {
+      style.push("disabled")
+    }
+    return style.join(" ")
+  }, [props.disabled])
+
   return (
-    <div className={'kt-input-number kt-input-cmp'}>
+    <div className={computedStyle}>
       <input type={'number'} className={'kt-input-number-inner lobster'} value={value || 0} onChange={onChange}/>
     </div>
   )

@@ -13,6 +13,20 @@
   text-align: center;
   transition: all ease-in-out .3s;
 
+  &.disabled {
+    cursor: not-allowed;
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      inset: 0;
+      border-radius: 3px;
+      background-color: rgba(61, 59, 59, 0.3);
+    }
+  }
+
 
   &:has(input:focus) {
     box-shadow: 0 0 10px rgba(255, 255, 255, .3);

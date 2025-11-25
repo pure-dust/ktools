@@ -5,6 +5,7 @@ import {decodeKey, encodeKey} from "~utils/hotkey.ts";
 interface ShortcutProps {
   defaultValue?: string
   onChange?: (value: string) => void
+  disabled?: boolean
 }
 
 export function Shortcut(props: ShortcutProps) {
