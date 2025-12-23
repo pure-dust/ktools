@@ -149,6 +149,9 @@ export function Novel() {
           currentWindow.setSize(new PhysicalSize(config.get('novel.window_width'), height))
         }
       })
+      config.on("novel.last", () => {
+        init()
+      })
 
       listen('select', async () => {
         let result = await open()

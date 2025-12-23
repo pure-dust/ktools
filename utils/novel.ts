@@ -78,77 +78,84 @@ class Novel {
     }
   }
 
-  async prevChapter() {
+  async prevChapter(auto?: boolean) {
     if (this.error) {
       return this.error
     }
-    this.currentChapter--
-    if (this.currentChapter < 0) {
-      this.currentChapter = 0
+    if (this.currentChapter > 0) {
+      this.currentChapter--
+      await this.getChapter()
+      this.currentLine = auto ? this.lines.length - 1 : 0
+      await this.update()
+      return this.lines[this.currentLine]
+    } else {
+      this.currentChapter = -1
+      this.currentLine = -1
+      await this.update()
       return filename(this.path)
     }
-    this.currentLine = 0
-    await this.getChapter()
-    await this.update()
-    return this.lines[this.currentLine]
   }
 
   async nextChapter() {
     if (this.error) {
       return this.error
     }
-    this.currentChapter++
-    if (this.currentChapter >= this.chapters.length) {
+    if (this.currentChapter < this.chapters.length - 1) {
+      this.currentChapter++
+      this.currentLine = 0
+      await this.getChapter()
+      await this.update()
+      return this.lines[this.currentLine]
+    } else {
       this.currentChapter = this.chapters.length - 1
+      this.currentLine = this.lines.length - 1
+      await this.update()
       return filename(this.path)
     }
-    this.currentLine = 0
-    await this.getChapter()
-    await this.update()
-    return this.lines[this.currentLine]
   }
 
   async prevLine() {
     if (this.error) {
       return this.error
     }
-    if (this.currentLine === -1) {
-      return ""
-    }
-    if (this.currentLine === 0 && this.currentChapter > 0) {
-      await this.prevChapter()
-      this.currentLine = this.lines.length - 1
-    } else {
+    if (this.currentLine > 0) {
       this.currentLine--
+      await this.update()
+      return this.lines[this.currentLine]
+    } else {
+      return await this.prevChapter(true)
     }
-    await this.update()
-    return this.lines[this.currentLine]
   }
 
   async nextLine() {
     if (this.error) {
       return this.error
     }
-    if ((this.currentLine >= this.lines.length - 1 && this.currentChapter < this.chapters.length - 1) || this.currentLine === -1) {
-      await this.nextChapter()
-    } else {
+    if (this.currentLine < this.lines.length - 1) {
       this.currentLine++
+      await this.update()
+      return this.lines[this.currentLine]
+    } else {
+      return await this.nextChapter()
     }
-    await this.update()
-    return this.lines[this.currentLine]
   }
 
   private async getChapter() {
     try {
       this.currentContent = await invoke<string>("chapter", {title: this.chapters[this.currentChapter]})
       this.parseChapter()
+      this.error = undefined
     } catch (error) {
+      this.error = error as string
       console.error(error);
     }
   }
 
   private parseChapter() {
     this.lines = []
+    if (this.currentChapter < 0 || this.currentChapter >= this.chapters.length) {
+      return
+    }
     this.lines.push(this.chapters[this.currentChapter] + "\n")
     const {count} = this.config
     this.currentContent.split(/\n/).forEach(c => {
