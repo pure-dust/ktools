@@ -32,6 +32,7 @@ export default function Setting() {
       delete novelCache.list[name]
       if (novelCache.last === current!.path) {
         novelCache.last = ''
+        setNovelCache({...novelCache})
       }
       await cache.update('novel', novelCache)
       api.success('删除成功！')
@@ -39,6 +40,7 @@ export default function Setting() {
       delete novelCache.list[name]
       if (novelCache.last === current!.path) {
         novelCache.last = ''
+        setNovelCache({...novelCache})
       }
       await cache.update('novel', novelCache)
       if (await invoke<boolean>('remove', {path: current!.path})) {
@@ -121,13 +123,13 @@ export default function Setting() {
       <Modal height={'80%'} width={420} rootClassName={'cache-wrapper'} title={'缓存管理'} visible={visible}
              onClose={() => setVisible(false)}>
         <div className={'cache-item'} style={{color: '#63a8ee'}}>
-          <div className="cache-item-title">上次看到：</div>
+          <div>上次看到：</div>
           <div className="cache-item-content">{filename(novelCache.last) || '暂无观看记录'}</div>
         </div>
         {Object.values(novelCache.list).map((item) => (
           <div className={'cache-item'} key={item.path}>
-            <div className="cache-item-title"></div>
-            <div className="cache-item-content">{filename(item.path)}</div>
+            <div className="cache-item-title" title={filename(item.path)}>{filename(item.path)}</div>
+            <div className="cache-item-content">{item.chapter}章{item.line}行</div>
             <div className="cache-item-delete">
               <Button type={'danger'} size={'small'} onClick={() => {
                 setDeleteVisible(true)

@@ -251,8 +251,9 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         let novel = instance.lock().unwrap();
         let process = (data.chapter as f64 / novel.chapter().len() as f64) * 100.0;
         let tooltip = format!(
-            "书名: {}\n章节: {}\n行数: {}\n进度: {}%",
+            "书名: {}\n第{}章: {}\n行数: {}\n进度: {}%",
             data.name,
+            data.chapter,
             data.title,
             data.line,
             format!("{:.2}", process)
