@@ -4,6 +4,7 @@ import preload from "~utils/preload.ts";
 import Router from "./router/router.tsx";
 import './styles/index.less'
 import '~styles/global.less'
+import {pluginLoader} from "~utils/plugin.ts";
 
 preload().then(async () => {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -11,5 +12,6 @@ preload().then(async () => {
       <Router/>
     </React.StrictMode>
   )
+  pluginLoader.render()
 })
 

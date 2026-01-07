@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {config} from "~utils/config.ts";
+import {pluginLoader} from "~utils/plugin.ts";
 
 export interface ConfigItem {
   name: string
@@ -86,6 +87,17 @@ export const useSetting = () => {
   const [setting, setSetting] = useState<ConfigItem[]>(SETTING_CONFIG)
 
   useEffect(() => {
+    let plugins = pluginLoader.getPluginSettings()
+    for (const [key, pluginSetting] of plugins) {
+      let category = setting.find(s => s.prop === pluginSetting.category)
+      if (category && category.items.findIndex(item => item.prop === key) === -1) {
+        category.items.push({
+          name: pluginSetting.name,
+          type: pluginSetting.type,
+          prop: key,
+        })
+      }
+    }
     setting[2].items[7].disabled = config.get('novel.use_autosize')
     setting[2].items[8].disabled = config.get('novel.use_autosize')
     setSetting([...setting])

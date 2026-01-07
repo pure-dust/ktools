@@ -9,5 +9,5 @@ export default async function () {
   })
   await config.init()
   await cache.init()
-  pluginLoader.create()
+  await pluginLoader.create()
 }
