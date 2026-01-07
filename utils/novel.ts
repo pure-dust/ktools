@@ -1,7 +1,7 @@
-import {invoke} from "@tauri-apps/api/core";
-import {emit} from "@tauri-apps/api/event";
-import {debounce, filename} from "~utils/utils.ts";
-import {config} from "~utils/config.ts";
+import { invoke } from "@tauri-apps/api/core";
+import { emit } from "@tauri-apps/api/event";
+import { debounce, filename } from "~utils/utils.ts";
+import { config } from "~utils/config.ts";
 
 interface NovelConfig {
   path: string
@@ -66,9 +66,9 @@ class Novel {
     this.currentContent = ""
     this.lines = []
     try {
-      this.chapters = await invoke("init", {config: {path: this.config.path, regexp: this.config.regexp}})
+      this.chapters = await invoke("novel_init", { config: { path: this.config.path, regexp: this.config.regexp } })
       if (this.currentLine >= 0 && this.currentChapter >= 0) {
-        this.currentContent = await invoke<string>("chapter", {title: this.chapters[this.currentChapter]})
+        this.currentContent = await invoke<string>("novel_chapter", { title: this.chapters[this.currentChapter] })
         this.parseChapter()
       }
       await this.update()
@@ -142,7 +142,7 @@ class Novel {
 
   private async getChapter() {
     try {
-      this.currentContent = await invoke<string>("chapter", {title: this.chapters[this.currentChapter]})
+      this.currentContent = await invoke<string>("novel_chapter", { title: this.chapters[this.currentChapter] })
       this.parseChapter()
       this.error = undefined
     } catch (error) {
@@ -157,7 +157,7 @@ class Novel {
       return
     }
     this.lines.push(this.chapters[this.currentChapter] + "\n")
-    const {count} = this.config
+    const { count } = this.config
     this.currentContent.split(/\n/).forEach(c => {
       let i = 0
       let s = c.slice(i * count, (i + 1) * count)

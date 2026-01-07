@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DropDown from 'rc-dropdown'
 import 'rc-dropdown/assets/index.css'
 import './index.less'
@@ -100,7 +100,7 @@ export function Select(props: SelectProps) {
   const Overlay = () => {
     return (
       <>
-        <div className="kt-select-overlay" style={{maxHeight: maxHeight + 'px'}} ref={menuRef}>
+        <div className="kt-select-overlay" style={{ maxHeight: maxHeight + 'px' }} ref={menuRef}>
           <div className={'kt-select-dropdown-item tips'} onClick={() => {
             setVisible(false)
             setSearchText("")
@@ -108,7 +108,7 @@ export function Select(props: SelectProps) {
           </div>
           {options.filter(item => item.label.includes(searchText)).map((option) => (
             <div className={option.value === value ? 'kt-select-dropdown-item selected' : 'kt-select-dropdown-item'}
-                 key={option.value} onClick={() => onChange(option.value)}>{option.label}</div>
+              key={option.value} onClick={() => onChange(option.value)}>{option.label}</div>
           ))}
         </div>
       </>
@@ -126,18 +126,18 @@ export function Select(props: SelectProps) {
   return (
     <>
       <DropDown ref={dropdownRef} overlayClassName={'kt-select-dropdown scroller'}
-                trigger={props.disabled ? [] : 'click'}
-                animation="slide-up" overlay={Overlay}
-                onVisibleChange={props.disabled ? undefined : handleVisibleChange}
+        trigger={props.disabled ? [] : 'click'}
+        animation="slide-up" overlay={Overlay}
+        onVisibleChange={props.disabled ? undefined : handleVisibleChange}
       >
         <div className={computedStyle}>
           <input ref={inputRef} className={'kt-select-inner'}
-                 disabled={props.disabled}
-                 value={props.select ? (visible ? searchText : value) : value || ""} readOnly={!props.select}
-                 placeholder={props.select ? (visible ? value : props.placeholder) : props.placeholder}
-                 onInput={(event) => {
-                   setSearchText((event.target as HTMLInputElement).value);
-                 }}/>
+            disabled={props.disabled}
+            value={props.select ? (visible ? searchText : value) : value || ""} readOnly={!props.select}
+            placeholder={props.select ? (visible ? value : props.placeholder) : props.placeholder}
+            onInput={(event) => {
+              setSearchText((event.target as HTMLInputElement).value);
+            }} />
         </div>
       </DropDown>
     </>

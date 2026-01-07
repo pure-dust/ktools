@@ -1,6 +1,6 @@
-import {FocusEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
+import { FocusEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import './index.less'
-import {decodeKey, encodeKey} from "~utils/hotkey.ts";
+import { decodeKey, encodeKey } from "~utils/hotkey.ts";
 
 interface ShortcutProps {
   defaultValue?: string
@@ -39,8 +39,8 @@ export function Shortcut(props: ShortcutProps) {
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
-    const {code} = e
-    const {platform_key, rust_key} = encodeKey(code)
+    const { code } = e
+    const { platform_key, rust_key } = encodeKey(code)
     downKeys.current.add(code)
     if (code === "Escape") {
       // emit("default")
@@ -72,9 +72,9 @@ export function Shortcut(props: ShortcutProps) {
   return (
     <div className={'kt-shortcut kt-input-cmp'} onClick={onClick}>
       <input className={"kt-shortcut-inner"} ref={inputRef} onBlur={onBlur} value={value || ""}
-             onKeyDown={onKeyDown}
-             onChange={() => {
-             }}/>
+        onKeyDown={onKeyDown}
+        onChange={() => {
+        }} />
     </div>
   )
 }

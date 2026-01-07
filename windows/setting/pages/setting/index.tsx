@@ -1,12 +1,12 @@
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import './index.less'
-import {InputItem, InputType, useSetting} from '~setting/constants'
-import {Button, ColorPicker, InputNumber, Modal, Select, Shortcut, Switch} from '~components/index'
-import {cache, config} from "~utils/config.ts";
-import {debounce, filename} from "~utils/utils.ts";
-import {useMessage} from "~components/message";
-import {invoke} from "@tauri-apps/api/core";
-import {AppFonts} from "~setting/pages/preview";
+import { InputItem, InputType, useSetting } from '~setting/constants'
+import { Button, ColorPicker, InputNumber, Modal, Select, Shortcut, Switch } from '~components/index'
+import { cache, config } from "~utils/config.ts";
+import { debounce, filename } from "~utils/utils.ts";
+import { useMessage } from "~components/message";
+import { invoke } from "@tauri-apps/api/core";
+import { AppFonts } from "~setting/pages/preview";
 
 export default function Setting() {
   const [visible, setVisible] = useState(false)
@@ -32,7 +32,7 @@ export default function Setting() {
       delete novelCache.list[name]
       if (novelCache.last === current!.path) {
         novelCache.last = ''
-        setNovelCache({...novelCache})
+        setNovelCache({ ...novelCache })
       }
       await cache.update('novel', novelCache)
       api.success('删除成功！')
@@ -40,10 +40,10 @@ export default function Setting() {
       delete novelCache.list[name]
       if (novelCache.last === current!.path) {
         novelCache.last = ''
-        setNovelCache({...novelCache})
+        setNovelCache({ ...novelCache })
       }
       await cache.update('novel', novelCache)
-      if (await invoke<boolean>('remove', {path: current!.path})) {
+      if (await invoke<boolean>('remove', { path: current!.path })) {
         api.success('删除成功！')
       } else {
         api.error('删除源文件失败！请尝试手动删除！')
@@ -84,22 +84,22 @@ export default function Setting() {
 
     if (item.type === InputType.color) {
       return <ColorPicker defaultValue={config.get(`${parent}.${item.prop}`)}
-                          onChange={updateColor} disabled={item.disabled} {...(item.other || {})}/>
+        onChange={updateColor} disabled={item.disabled} {...(item.other || {})} />
     } else if (item.type === InputType.number) {
       return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)}
-                          onChange={onChange} disabled={item.disabled} {...(item.other || {})} />
+        onChange={onChange} disabled={item.disabled} {...(item.other || {})} />
     } else if (item.type === InputType.select) {
       return <Select defaultValue={config.get(`${parent}.${item.prop}`)}
-                     options={option} onChange={onChange} disabled={item.disabled} {...(item.other || {})}/>
+        options={option} onChange={onChange} disabled={item.disabled} {...(item.other || {})} />
     } else if (item.type === InputType.shortcut) {
       return <Shortcut defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}
-                       disabled={item.disabled} {...(item.other || {})}/>
+        disabled={item.disabled} {...(item.other || {})} />
     } else if (item.type === InputType.button) {
       return (<Button block onClick={() => setVisible(true)}
-                      disabled={item.disabled} {...(item.other || {})}>{item.name}</Button>)
+        disabled={item.disabled} {...(item.other || {})}>{item.name}</Button>)
     } else if (item.type === InputType.switch) {
       return (<Switch defaultValue={config.get(`${parent}.${item.prop}`)}
-                      onChange={onChange} disabled={item.disabled} {...(item.other || {})}></Switch>)
+        onChange={onChange} disabled={item.disabled} {...(item.other || {})}></Switch>)
     }
   }, [])
 
@@ -121,8 +121,8 @@ export default function Setting() {
         })}
       </div>
       <Modal height={'80%'} width={420} rootClassName={'cache-wrapper'} title={'缓存管理'} visible={visible}
-             onClose={() => setVisible(false)}>
-        <div className={'cache-item'} style={{color: '#63a8ee'}}>
+        onClose={() => setVisible(false)}>
+        <div className={'cache-item'} style={{ color: '#63a8ee' }}>
           <div>上次看到：</div>
           <div className="cache-item-content">{filename(novelCache.last) || '暂无观看记录'}</div>
         </div>
@@ -140,9 +140,9 @@ export default function Setting() {
         ))}
       </Modal>
       <Modal visible={deleteVisible} title={'确认删除？'} onClose={() => setDeleteVisible(false)}>
-        <Button style={{marginBottom: 6}} type={'danger'} onClick={() => onDelete(1)}>删除（仅删除记录）</Button>
-        <Button style={{marginBottom: 6}} type={'danger'}
-                onClick={() => onDelete(2)}>删除（删除记录和源文件）</Button>
+        <Button style={{ marginBottom: 6 }} type={'danger'} onClick={() => onDelete(1)}>删除（仅删除记录）</Button>
+        <Button style={{ marginBottom: 6 }} type={'danger'}
+          onClick={() => onDelete(2)}>删除（删除记录和源文件）</Button>
         <Button onClick={() => onDelete()}>取消（取消本次操作）</Button>
       </Modal>
       {holder}

@@ -10,7 +10,7 @@ use tauri::Emitter;
 static SCROLL: Mutex<AtomicBool> = Mutex::new(AtomicBool::new(false));
 
 #[tauri::command(async)]
-pub fn init(config: NovelConfig) -> Result<Vec<String>, String> {
+pub fn novel_init(config: NovelConfig) -> Result<Vec<String>, String> {
     let instance = Novel::new();
     let mut novel = instance.lock().unwrap();
     if config.regexp.is_some() {
@@ -23,7 +23,7 @@ pub fn init(config: NovelConfig) -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub fn chapter(title: String) -> String {
+pub fn novel_chapter(title: String) -> String {
     let instance = Novel::new();
     let novel = instance.lock().unwrap();
     novel.single(title)

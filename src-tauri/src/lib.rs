@@ -6,7 +6,7 @@ mod command;
 mod model;
 mod setup;
 use command::{
-    novel::{chapter, get_system_fonts, init, remove, start_mouse_wheel},
+    novel::{get_system_fonts, novel_chapter, novel_init, remove, start_mouse_wheel},
     plugin::{get_plugin_file, get_plugin_list},
     read_file,
 };
@@ -15,8 +15,8 @@ use command::{
 pub fn run() {
     tauri::Builder::default()
         .invoke_handler(generate_handler![
-            init,
-            chapter,
+            novel_init,
+            novel_chapter,
             remove,
             start_mouse_wheel,
             get_system_fonts,
