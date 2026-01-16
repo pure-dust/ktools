@@ -1,3 +1,5 @@
+use crate::model::config::DEFAULT_REGEXP;
+
 use regex::Regex;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -20,7 +22,6 @@ pub struct Novel {
     regex: String,
 }
 static INSTANCE: OnceLock<Arc<Mutex<Novel>>> = OnceLock::new();
-const DEFAULT_REGEXP: &str = r"第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*";
 
 impl Novel {
     pub fn new() -> Arc<Mutex<Novel>> {
@@ -31,7 +32,7 @@ impl Novel {
                     path: String::from(""),
                     content: HashMap::new(),
                     chapter: Vec::new(),
-                    regex: r"第[零一二三四五六七八九十百千万0-9]+章[\s|：]*[?s:.]*".to_string(),
+                    regex: DEFAULT_REGEXP.to_string(),
                 }))
             })
             .clone()
