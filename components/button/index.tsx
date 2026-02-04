@@ -1,8 +1,8 @@
-import {CSSProperties, PropsWithChildren, useMemo} from "react";
+import {CSSProperties, PropsWithChildren, MouseEvent, useMemo} from "react";
 import './index.less'
 
 interface ButtonProps extends PropsWithChildren {
-  onClick?: () => void
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void
   block?: boolean
   size?: "small" | "medium" | "large"
   type?: "primary" | "success" | "danger" | "warning"

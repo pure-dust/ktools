@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getCurrentWindow, PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
-import { open } from "@tauri-apps/plugin-dialog"
-import { hotkey } from "~utils/hotkey.ts";
-import { novel } from "~utils/novel.ts";
-import { cache, config } from "~utils/config.ts";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {getCurrentWindow, PhysicalPosition, PhysicalSize} from "@tauri-apps/api/window";
+import {open} from "@tauri-apps/plugin-dialog"
+import {hotkey} from "~utils/hotkey.ts";
+import {novel} from "~utils/novel.ts";
+import {cache, config} from "~utils/config.ts";
 import './index.less'
-import { listen } from "@tauri-apps/api/event";
-import { filename } from "~utils/utils.ts";
-import { invoke } from "@tauri-apps/api/core";
+import {listen} from "@tauri-apps/api/event";
+import {filename} from "~utils/utils.ts";
+import {invoke} from "@tauri-apps/api/core";
 
 type ShortcutWrapper<T extends (...args: any) => any = (...args: any) => any> = (fn: T, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => T
 
@@ -149,9 +149,10 @@ export function Novel() {
           currentWindow.setSize(new PhysicalSize(config.get('novel.window_width'), height))
         }
       })
-      config.on("novel.last", () => {
+      cache.on("novel.last", () => {
         init()
       })
+
 
       listen('select', async () => {
         let result = await open()
@@ -231,8 +232,8 @@ export function Novel() {
 
   return (
     <>
-      <div className={'kt-novel'} style={{ color, fontSize, fontFamily }} ref={textRef}
-        data-tauri-drag-region={true}>{text}</div>
+      <div className={'kt-novel'} style={{color, fontSize, fontFamily}} ref={textRef}
+           data-tauri-drag-region={true}>{text}</div>
     </>
   )
 }

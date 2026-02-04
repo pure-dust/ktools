@@ -30,7 +30,7 @@ export class ConfigManager<T> extends EventEmitter<any> {
     await this.file?.seek(0, 0)
     await this.file?.write(this.encoder.encode(JSON.stringify(this.config, undefined, 2)))
   }, 1000)
-  private limitUpdate = debounce(async (target: object, key: string, newValue: object, oldValue: object) => {
+  private limitUpdate = async (target: object, key: string, newValue: object, oldValue: object) => {
     await emit("config-update", {
       target,
       key,
@@ -39,7 +39,7 @@ export class ConfigManager<T> extends EventEmitter<any> {
       label: getCurrentWindow().label,
       manage: this.file_name
     })
-  }, 1000)
+  }
 
   constructor(file_name: string, defaultConfig: object) {
     super()
@@ -130,8 +130,8 @@ export class ConfigManager<T> extends EventEmitter<any> {
         await this.limitUpdate(target, key, newValue, oldValue)
         await this.limitWrite()
       }
-      this.isSync = false
       this.emit(key, [target, key, newValue, oldValue])
+      this.isSync = false
     })
   }
 }

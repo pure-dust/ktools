@@ -1,10 +1,11 @@
 console.log("css-loader start loading")
 
-KtoolsPluginLoader.addSetting([{ category: "app", name: "style-测试", type: 5, prop: "test" }])
+KtoolsPluginLoader.addSetting([{category: "app", name: "style-测试", type: 5, prop: "test"}])
 
 let styleContent = await KtoolsPluginLoader.readFile("style.css")
 let style = document.createElement("style")
 style.innerHTML = styleContent
+let value = KtoolsPluginLoader.getConfigValue("app.kl-style_test")
 if (value === undefined || value === true) {
     document.head.appendChild(style)
 }
