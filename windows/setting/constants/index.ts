@@ -19,13 +19,13 @@ export interface InputItem {
 
 export enum InputType {
   color,
+  string,
   number,
   select,
   shortcut,
   button,
   switch,
 }
-
 
 export const SETTING_CONFIG: ConfigItem[] = [
   {
@@ -58,6 +58,14 @@ export const SETTING_CONFIG: ConfigItem[] = [
       {name: "窗口长度", type: InputType.number, prop: "window_width"},
       {name: "窗口高度", type: InputType.number, prop: "window_height"},
     ],
+  },
+  {
+    name: "网络小说",
+    prop: "net_novel",
+    items: [
+      {name: "地址", type: InputType.string, prop: "net_address"},
+      {name: "端口", type: InputType.string, prop: "net_port"},
+    ]
   },
   {
     name: "快捷键",

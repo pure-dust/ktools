@@ -1,6 +1,6 @@
 import {BaseDirectory} from "@tauri-apps/api/path";
 import default_config from '~assets/default.ts'
-import {FileHandle, open, readTextFile} from "@tauri-apps/plugin-fs";
+import {create, exists, FileHandle, open, readTextFile} from "@tauri-apps/plugin-fs";
 import {debounce, deep_proxy, equals} from "~utils/utils.ts";
 import {EventEmitter} from "@tauri-apps/plugin-shell";
 import {emit, listen} from "@tauri-apps/api/event";
@@ -113,6 +113,11 @@ export class ConfigManager<T> extends EventEmitter<any> {
   }
 
   private async load_file() {
+    let is_exists = await exists(this.file_name, {baseDir: this.base})
+    if (!is_exists) {
+      this.file = await create(this.file_name, {baseDir: this.base})
+      await this.write(true)
+    }
     this.file = await open(this.file_name, {baseDir: this.base, read: true, write: true, create: true})
     let info = await this.file?.stat()
     if (info.size === 0) {
@@ -137,7 +142,6 @@ export class ConfigManager<T> extends EventEmitter<any> {
 }
 
 export const config = new ConfigManager<Config>("config.json", default_config)
-
 export const cache = new ConfigManager<AppCache>("cache.json", {
   novel: {
     last: "",

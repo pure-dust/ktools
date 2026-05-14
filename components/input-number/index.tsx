@@ -1,7 +1,6 @@
 import './index.less'
 import {ChangeEvent, useMemo, useState} from "react";
 
-
 interface InputNumberProps {
   defaultValue?: number
   onChange?: (value: number) => void

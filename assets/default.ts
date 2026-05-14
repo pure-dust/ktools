@@ -12,6 +12,10 @@ export default <Config>{
     window_width: 240,
     window_height: 20
   },
+  net_novel: {
+    address: "",
+    port: ""
+  },
   shortcut: {
     prev: "NumpadSubtract",
     next: "NumpadAdd",

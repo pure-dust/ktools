@@ -1,3 +1,4 @@
+use crate::model::api_query::Book;
 use crate::model::novel::{Novel, NovelConfig};
 use font_kit::source::SystemSource;
 use rdev::{listen, Button, EventType};
@@ -27,6 +28,20 @@ pub fn novel_chapter(title: String) -> String {
     let instance = Novel::new();
     let novel = instance.lock().unwrap();
     novel.single(title)
+}
+
+#[tauri::command]
+pub fn set_novel_book(book: Book) {
+    let instance = Novel::new();
+    let mut novel = instance.lock().unwrap();
+    novel.set_net_books(book);
+}
+
+#[tauri::command]
+pub fn get_novel_books() -> Book {
+    let instance = Novel::new();
+    let novel = instance.lock().unwrap();
+    novel.get_net_books()
 }
 
 #[tauri::command(async)]
@@ -73,9 +88,8 @@ pub fn start_mouse_wheel(webview_window: tauri::WebviewWindow) {
 #[tauri::command]
 pub fn get_system_fonts() -> Result<Vec<String>, String> {
     let source = SystemSource::new();
-    let families = match source.all_families() {
-        Ok(families) => families,
-        Err(e) => return Err(e.to_string()),
-    };
-    Ok(families)
+    match source.all_families() {
+        Ok(families) => Ok(families),
+        Err(e) => Err(e.to_string()),
+    }
 }

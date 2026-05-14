@@ -1,5 +1,6 @@
 import {cache, config} from "~utils/config.ts";
 import {pluginLoader} from "~utils/plugin.ts";
+import {netNovel} from "~utils/net_novel.ts";
 
 export default async function () {
   document.addEventListener('contextmenu', e => {
@@ -9,5 +10,6 @@ export default async function () {
   })
   await config.init()
   await cache.init()
+  await netNovel.init()
   await pluginLoader.create()
 }

@@ -1,5 +1,6 @@
 use crate::model::config::DEFAULT_REGEXP;
 
+use crate::model::api_query::Book;
 use regex::Regex;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -20,7 +21,9 @@ pub struct Novel {
     content: HashMap<String, String>,
     chapter: Vec<String>,
     regex: String,
+    book: Book,
 }
+
 static INSTANCE: OnceLock<Arc<Mutex<Novel>>> = OnceLock::new();
 
 impl Novel {
@@ -33,6 +36,7 @@ impl Novel {
                     content: HashMap::new(),
                     chapter: Vec::new(),
                     regex: DEFAULT_REGEXP.to_string(),
+                    book: Book::default(),
                 }))
             })
             .clone()
@@ -98,6 +102,14 @@ impl Novel {
             .get(&title)
             .unwrap_or(&String::from(""))
             .clone()
+    }
+
+    pub fn get_net_books(&self) -> Book {
+        self.book.clone()
+    }
+
+    pub fn set_net_books(&mut self, book: Book) {
+        self.book = book
     }
 }
 

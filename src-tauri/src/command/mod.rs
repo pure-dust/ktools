@@ -5,6 +5,7 @@ use tauri::{AppHandle, Manager};
 
 pub mod novel;
 pub mod plugin;
+pub mod api;
 
 #[tauri::command(async)]
 pub fn read_file(app: AppHandle, plugin: String, path: String) -> Result<String, String> {

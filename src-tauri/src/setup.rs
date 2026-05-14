@@ -1,4 +1,6 @@
-use crate::model::novel::Novel;
+use crate::model::config::AppConfig;
+use std::fs::File;
+use std::os::windows::process::CommandExt;
 use std::process::Command;
 use tauri::image::Image;
 use tauri::menu::{MenuBuilder, MenuEvent, MenuItem, Submenu};
@@ -8,11 +10,14 @@ use tauri::utils::config::WindowEffectsConfig;
 use tauri::utils::WindowEffect;
 use tauri::window::Color;
 use tauri::{App, AppHandle, Emitter, Listener, Manager, PhysicalSize, Theme, WebviewWindow};
+
+const CREATE_NO_WINDOW: u32 = 0x08000000;
 #[derive(Debug, serde::Deserialize)]
 struct TooltipPayload {
     name: String,
     title: String,
     chapter: usize,
+    len: usize,
     line: usize,
 }
 
@@ -21,12 +26,14 @@ fn exec_command(command_str: &[&str]) {
         Command::new("cmd")
             .arg("/c")
             .args(command_str)
+            .creation_flags(CREATE_NO_WINDOW)
             .output()
             .expect("exec command failed")
     } else {
         Command::new("sh")
             .arg("-c")
             .args(command_str)
+            .creation_flags(CREATE_NO_WINDOW)
             .output()
             .expect("exec command failed")
     };
@@ -94,7 +101,8 @@ fn create_setting(app: &AppHandle) -> tauri::Result<WebviewWindow> {
 fn on_menu_event(app: &AppHandle, event: MenuEvent) {
     let config_dir = app.path().app_config_dir().unwrap();
     let config_file_path = config_dir.join("config.json");
-    let cache_file_path = config_dir.join("cache");
+    let cache_file_path = config_dir.join("cache.json");
+    let app_dir_path = app.path().resource_dir().unwrap();
     match event.id.as_ref() {
         "quit" => app.exit(0),
         "select" => app.emit("select", ()).unwrap(),
@@ -103,8 +111,9 @@ fn on_menu_event(app: &AppHandle, event: MenuEvent) {
         "notepad_config" => exec_command(&["notepad", config_file_path.to_str().unwrap()]),
         "vscode_cache" => exec_command(&["code", cache_file_path.to_str().unwrap()]),
         "notepad_cache" => exec_command(&["notepad", cache_file_path.to_str().unwrap()]),
-        "config_dir" => exec_command(&["start", config_dir.to_str().unwrap()]),
-        "cache_dir" => exec_command(&["start", config_dir.to_str().unwrap()]),
+        "config_dir" => open::that(config_dir).unwrap(),
+        "cache_dir" => open::that(config_dir).unwrap(),
+        "app_dir" => open::that(app_dir_path).unwrap(),
         "setting" => {
             let setting = create_setting(app).unwrap();
             setting.set_size(PhysicalSize::new(540, 400)).unwrap();
@@ -125,100 +134,89 @@ fn on_menu_event(app: &AppHandle, event: MenuEvent) {
 
 fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
     let app_handle = app.handle().clone();
-    let icon_path = app
-        .path()
-        .resolve("icon.ico", BaseDirectory::Resource)
-        .unwrap();
-    let quit = MenuItem::with_id(&app_handle, "quit", "退出", true, None::<&str>).unwrap();
+    let icon_path = app.path().resolve("icon.ico", BaseDirectory::Resource)?;
+    let quit = MenuItem::with_id(&app_handle, "quit", "退出", true, None::<&str>)?;
     let vscode_config = MenuItem::with_id(
         &app_handle,
         "vscode_config",
         "使用vscode打开",
         true,
         None::<&str>,
-    )
-    .unwrap();
+    )?;
     let notepad_config = MenuItem::with_id(
         &app_handle,
         "notepad_config",
         "使用记事本打开",
         true,
         None::<&str>,
-    )
-    .unwrap();
+    )?;
     let config_dir = MenuItem::with_id(
         &app_handle,
         "config_dir",
         "打开文件目录",
         true,
         None::<&str>,
-    )
-    .unwrap();
+    )?;
     let config = Submenu::with_id_and_items(
         app.handle(),
         "config_file",
         "配置文件",
         true,
         &[&vscode_config, &notepad_config, &config_dir],
-    )
-    .unwrap();
+    )?;
     let vscode_cache = MenuItem::with_id(
         &app_handle,
         "vscode_cache",
         "使用vscode打开",
         true,
         None::<&str>,
-    )
-    .unwrap();
+    )?;
     let notepad_cache = MenuItem::with_id(
         &app_handle,
         "notepad_cache",
         "使用记事本打开",
         true,
         None::<&str>,
-    )
-    .unwrap();
+    )?;
     let cache_dir =
-        MenuItem::with_id(&app_handle, "cache_dir", "打开文件目录", true, None::<&str>).unwrap();
+        MenuItem::with_id(&app_handle, "cache_dir", "打开文件目录", true, None::<&str>)?;
     let cache = Submenu::with_id_and_items(
         app.handle(),
         "config_file",
         "缓存文件",
         true,
         &[&vscode_cache, &notepad_cache, &cache_dir],
-    )
-        .unwrap();
+    )?;
     let devtool_novel = MenuItem::with_id(
         &app_handle,
         "devtool_novel",
         "打开书籍调试工具",
         true,
         None::<&str>,
-    )
-        .unwrap();
+    )?;
     let devtool_setting = MenuItem::with_id(
         &app_handle,
         "devtool_setting",
         "打开设置调试工具",
         true,
         None::<&str>,
-    )
-        .unwrap();
+    )?;
     let devtool = Submenu::with_id_and_items(
         app.handle(),
         "devtool",
         "调试工具",
         true,
         &[&devtool_novel, &devtool_setting],
-    )
-    .unwrap();
-    let select = MenuItem::with_id(&app_handle, "select", "选择书籍", true, None::<&str>).unwrap();
-    let reload = MenuItem::with_id(&app_handle, "reload", "重载", true, None::<&str>).unwrap();
-    let setting = MenuItem::with_id(&app_handle, "setting", "设置", true, None::<&str>).unwrap();
+    )?;
+    let app_dir = MenuItem::with_id(&app_handle, "app_dir", "打开软件目录", true, None::<&str>)?;
+    let select = MenuItem::with_id(&app_handle, "select", "选择书籍", true, None::<&str>)?;
+    let reload = MenuItem::with_id(&app_handle, "reload", "重载", true, None::<&str>)?;
+    let setting = MenuItem::with_id(&app_handle, "setting", "设置", true, None::<&str>)?;
     let menu = MenuBuilder::new(app)
-        .items(&[&reload, &select, &setting, &config, &cache, &devtool, &quit])
-        .build()
-        .unwrap();
+        .items(&[
+            &reload, &select, &setting, &config, &cache, &app_dir, &devtool, &quit,
+        ])
+        .build()?;
     let tray = TrayIconBuilder::new()
         .icon(Image::from_path(icon_path).unwrap())
         .menu(&menu)
@@ -239,17 +237,29 @@ fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
 }
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    let novel = create_novel(app.handle()).unwrap();
-    novel.hide().unwrap();
-    novel.set_size(PhysicalSize::new(400.0, 24.0)).unwrap();
-
+    let novel = create_novel(app.handle())?;
+    novel.hide()?;
+    let config_path = app
+        .path()
+        .resolve("config.json", BaseDirectory::AppConfig)?;
+    let file = File::open(config_path);
+    match file {
+        Ok(file) => {
+            let config: AppConfig = serde_json::from_reader(file)?;
+            novel.set_size(PhysicalSize::new(
+                config.novel.window_width,
+                config.novel.window_height,
+            ))?;
+        }
+        Err(_error) => {
+            novel.set_size(PhysicalSize::new(400.0, 24.0))?;
+        }
+    };
     let tray = build_tray(app)?;
 
     app.listen("change-tip", move |event| {
         let data: TooltipPayload = serde_json::from_str(event.payload()).unwrap();
-        let instance = Novel::new();
-        let novel = instance.lock().unwrap();
-        let process = (data.chapter as f64 / novel.chapter().len() as f64) * 100.0;
+        let process = (data.chapter as f64 / data.len as f64) * 100.0;
         let tooltip = format!(
             "书名: {}\n第{}章: {}\n行数: {}\n进度: {}%",
             data.name,

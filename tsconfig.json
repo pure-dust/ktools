@@ -52,7 +52,8 @@
     "components/**/.tsx",
     "components/**/.d.ts",
     "public/**.ts",
-    "utils/**.ts"
+    "utils/**.ts",
+    "api/**.ts"
   ],
   "references": [
     {

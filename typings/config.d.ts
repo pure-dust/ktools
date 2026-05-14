@@ -13,6 +13,9 @@ interface NovelConfig extends Record<string, any> {
   regexp_options: string[]
   count: number
   use_scroll: boolean
+  use_autosize: boolean
+  window_width: number
+  window_height: number
 }
 
 interface ShortcutConfig extends Record<string, any> {
@@ -31,10 +34,16 @@ interface OtherConfig {
 
 }
 
+interface NetNovelConfig {
+  address: string
+  port: string
+}
+
 interface Config {
   app: Partial<AppConfig>
   theme: Partial<ThemeConfig>
   novel: Partial<NovelConfig>
+  net_novel: Partial<NetNovelConfig>
   shortcut: Partial<ShortcutConfig>
   other: Partial<OtherConfig>
 }

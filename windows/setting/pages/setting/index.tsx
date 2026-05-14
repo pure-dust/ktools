@@ -7,6 +7,7 @@ import {debounce, filename} from "~utils/utils.ts";
 import {useMessage} from "~components/message";
 import {invoke} from "@tauri-apps/api/core";
 import {AppFonts} from "~setting/pages/preview";
+import {InputString} from "~components/input";
 
 export default function Setting() {
   const [visible, setVisible] = useState(false)
@@ -91,6 +92,9 @@ export default function Setting() {
     if (item.type === InputType.color) {
       return <ColorPicker defaultValue={config.get(`${parent}.${item.prop}`)}
                           onChange={updateColor} disabled={item.disabled} {...(item.other || {})} />
+    } else if (item.type === InputType.string) {
+      return <InputString defaultValue={config.get(`${parent}.${item.prop}`)} onChange={onChange}
+                          disabled={item.disabled} {...(item.other || {})}  />
     } else if (item.type === InputType.number) {
       return <InputNumber defaultValue={config.get(`${parent}.${item.prop}`)}
                           onChange={onChange} disabled={item.disabled} {...(item.other || {})} />

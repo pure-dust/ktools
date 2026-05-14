@@ -8,8 +8,11 @@ import './index.less'
 import {listen} from "@tauri-apps/api/event";
 import {filename} from "~utils/utils.ts";
 import {invoke} from "@tauri-apps/api/core";
+import {netNovel} from "~utils/net_novel.ts";
 
 type ShortcutWrapper<T extends (...args: any) => any = (...args: any) => any> = (fn: T, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => T
+
+let localMode: boolean = true
 
 const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => {
   return (state: 'Released' | 'Pressed' | 'Pressing') => {
@@ -27,7 +30,7 @@ const shortcutWrapper: ShortcutWrapper = (fn, type?: 'Released' | 'Pressed' | 'P
 
 const novelEventWrapper = (fn: Function, type?: 'Released' | 'Pressed' | 'Pressing', exclude?: boolean) => {
   return shortcutWrapper(async () => {
-    if (!cache.get('novel.last')) {
+    if (!cache.get('novel.last') && localMode) {
       return
     }
     fn()
@@ -36,11 +39,15 @@ const novelEventWrapper = (fn: Function, type?: 'Released' | 'Pressed' | 'Pressi
 }
 
 const updateCache = async () => {
-  await cache.update(`novel.list.${filename(novel.path)}`, {
-    path: novel.path,
-    chapter: novel.chapter,
-    line: novel.line,
-  })
+  if (localMode) {
+    await cache.update(`novel.list.${filename(novel.path)}`, {
+      path: novel.path,
+      chapter: novel.chapter,
+      line: novel.line,
+    })
+  } else {
+    await netNovel.save_book_progress()
+  }
 }
 
 export function Novel() {
@@ -59,16 +66,16 @@ export function Novel() {
   const hotkeyCallback = useMemo(() => {
     return {
       prev: novelEventWrapper(async () => {
-        setText(await novel.prevLine())
+        setText(localMode ? await novel.prevLine() : await netNovel.prevLine())
       }, "Released", true),
       next: novelEventWrapper(async () => {
-        setText(await novel.nextLine())
+        setText(localMode ? await novel.nextLine() : await netNovel.nextLine())
       }, "Released", true),
       prev_chapter: novelEventWrapper(async () => {
-        setText(await novel.prevChapter())
+        setText(localMode ? await novel.prevChapter() : await netNovel.prevChapter())
       }, "Released", true),
       next_chapter: novelEventWrapper(async () => {
-        setText(await novel.nextChapter())
+        setText(localMode ? await novel.nextChapter() : await netNovel.nextChapter())
       }, "Released", true),
       hide: shortcutWrapper(async () => {
         if (await currentWindow.isVisible()) {
@@ -150,6 +157,7 @@ export function Novel() {
         }
       })
       cache.on("novel.last", () => {
+        localMode = true
         init()
       })
 
@@ -186,14 +194,17 @@ export function Novel() {
         if (!config.get('novel.use_scroll')) {
           return
         }
-        if (!visible.current || !cache.get('novel.last')) {
+        if (!visible.current) {
+          return
+        }
+        if (localMode && !cache.get('novel.last')) {
           return
         }
 
         if (event.payload > 0) {
-          setText(await novel.prevLine())
+          setText(localMode ? await novel.prevLine() : await netNovel.prevLine())
         } else {
-          setText(await novel.nextLine())
+          setText(localMode ? await novel.nextLine() : await netNovel.nextLine())
         }
         await updateCache()
       }).then()
@@ -206,6 +217,12 @@ export function Novel() {
           await currentWindow.show()
           visible.current = true
         }
+      }).then()
+
+      listen<Book>("set_novel_book", async (event) => {
+        setText(event.payload.name)
+        await netNovel.set_book(event.payload)
+        localMode = false
       }).then()
 
       for (const [key, cb] of Object.entries(hotkeyCallback)) {
