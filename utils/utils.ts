@@ -89,4 +89,3 @@ export function equals(a: any, b: any): boolean {
 
   return equal(a, b)
 }
-

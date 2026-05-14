@@ -1,7 +1,6 @@
-import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { config } from "~utils/config.ts";
-
+import {invoke} from "@tauri-apps/api/core";
+import {getCurrentWindow} from "@tauri-apps/api/window";
+import {config} from "~utils/config.ts";
 
 class PluginLoader {
   private readonly plugins: Map<string, PluginInfo> = new Map();
@@ -30,7 +29,7 @@ class PluginLoader {
       addSetting(config: Array<AddSettingProps>) {
         let PluginName = this.PluginName
         config.forEach((item) => {
-          _self.settings.set(PluginName + "_" + item.prop, { ...item, name: PluginName + " - " + item.name })
+          _self.settings.set(PluginName + "_" + item.prop, {...item, name: PluginName + " - " + item.name})
         })
       },
       subscribeConfigChange(prop: string, fn: (arg: any) => void) {
@@ -46,7 +45,7 @@ class PluginLoader {
         if (!this.PluginName) {
           return Promise.reject("非法调用")
         }
-        return invoke<string>("read_file", { plugin: this.PluginName, path })
+        return invoke<string>("read_file", {plugin: this.PluginName, path})
       }
     }
   }
@@ -61,8 +60,8 @@ class PluginLoader {
             })(this);
             `;
         const env = this.createPluginEnv()
-        const func = new Function("KtoolsPluginLoader", "PluginName", wrappedScript);
-        await func({ ...env, PluginName: plugin.name });
+        const func = new Function("KtoolsPluginLoader", wrappedScript);
+        await func({...env, PluginName: plugin.name});
         console.log(`插件 ${plugin.name} 加载成功\n`);
         resolve();
       } catch (e) {
@@ -73,7 +72,7 @@ class PluginLoader {
 
   private loadPlugin(plugin: PluginInfo) {
     return new Promise<void>((resolve, reject) => {
-      invoke<string>("get_plugin_file", { plugin }).then((content: string) => {
+      invoke<string>("get_plugin_file", {plugin}).then((content: string) => {
         return this.execPlugin(plugin, content)
       }).then(() => {
         this.plugins.set(plugin.name, plugin)

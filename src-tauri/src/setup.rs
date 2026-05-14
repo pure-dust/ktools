@@ -10,8 +10,12 @@ use tauri::utils::config::WindowEffectsConfig;
 use tauri::utils::WindowEffect;
 use tauri::window::Color;
 use tauri::{App, AppHandle, Emitter, Listener, Manager, PhysicalSize, Theme, WebviewWindow};
+use winapi::um::shellscalingapi::SetProcessDpiAwareness;
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+const PROCESS_SYSTEM_DPI_AWARE: u32 = 1;
+
 #[derive(Debug, serde::Deserialize)]
 struct TooltipPayload {
     name: String,
@@ -236,7 +240,24 @@ fn build_tray(app: &mut App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
     Ok(tray)
 }
 
+#[allow(unused)]
+fn set_dpi_awareness() {
+    unsafe {
+        let result: i32 = SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+        match result {
+            0 => {
+                println!("DPI 感知设置成功");
+            }
+            code => {
+                println!("DPI 感知设置失败，错误码{}", code);
+            }
+        }
+    }
+}
+
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+    // set_dpi_awareness();
+
     let novel = create_novel(app.handle())?;
     novel.hide()?;
     let config_path = app

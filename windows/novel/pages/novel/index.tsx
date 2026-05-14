@@ -57,11 +57,26 @@ export function Novel() {
   const [fontSize, setFontSize] = useState<number>(config.get('novel.font_size'))
   const [fontFamily, setFontFamily] = useState<string>(config.get('novel.font'))
   const [useAutosize, setUseAutosize] = useState<boolean>(config.get('novel.use_autosize'))
+  const [scale, setScale] = useState<number>(1)
   const visible = useRef<boolean>(false)
 
   const currentWindow = useMemo(() => {
     return getCurrentWindow()
   }, [])
+
+  const setWindowSize = () => {
+    if (!textRef.current) {
+      return
+    }
+    let width = textRef.current.offsetWidth
+    let height = textRef.current.offsetHeight
+    if (useAutosize) {
+      currentWindow.setSize(new PhysicalSize(Math.ceil(width * scale), Math.ceil(height * scale))).then()
+    } else {
+      currentWindow.setSize(new PhysicalSize(width, height)).then()
+    }
+
+  }
 
   const hotkeyCallback = useMemo(() => {
     return {
@@ -128,7 +143,7 @@ export function Novel() {
     const initialize = async () => {
       visible.current = await currentWindow.isVisible()
       await init()
-
+      setScale(await invoke<number>("get_dpi_scale") || 1)
       config.on('novel.font_color', ([_target, _key, color]) => {
         setColor(color)
       })
@@ -138,12 +153,8 @@ export function Novel() {
       config.on('novel.font', ([_target, _key, font]) => {
         setFontFamily(font)
       })
-      config.on("novel.use_autosize", ([_target, _key, use_autosize]) => {
-        if (use_autosize) {
-          currentWindow.setSize(new PhysicalSize(textRef.current!.offsetWidth, textRef.current!.offsetHeight)).then()
-        } else {
-          currentWindow.setSize(new PhysicalSize(config.get('novel.window_width'), config.get('novel.window_height')))
-        }
+      config.on("novel.use_autosize", async ([_target, _key, use_autosize]) => {
+        setWindowSize()
         setUseAutosize(use_autosize)
       })
       config.on('novel.window_width', ([_target, _key, width]) => {
@@ -160,7 +171,6 @@ export function Novel() {
         localMode = true
         init()
       })
-
 
       listen('select', async () => {
         let result = await open()
@@ -230,6 +240,7 @@ export function Novel() {
       }
 
       invoke("start_mouse_wheel").then()
+
     }
 
     initialize().then()
@@ -241,10 +252,10 @@ export function Novel() {
   }, []);
 
   useEffect(() => {
-    if (!textRef.current || !useAutosize) {
+    if (!useAutosize) {
       return
     }
-    currentWindow.setSize(new PhysicalSize(textRef.current.offsetWidth, textRef.current.offsetHeight)).then()
+    setWindowSize()
   }, [fontSize, fontFamily, text]);
 
   return (
