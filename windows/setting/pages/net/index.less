@@ -1,0 +1,48 @@
+.net {
+  display: flex;
+  flex-wrap: wrap;
+  color: #fff;
+
+  .book {
+    width: 50%;
+    padding: 6px 24px;
+
+    .inner {
+      cursor: pointer;
+      padding: 24px 12px;
+      transition: all .2s;
+      border-radius: 5px;
+      overflow: hidden;
+
+      &:hover {
+        box-shadow: 0 0 15px 5px #333333;
+      }
+    }
+
+    .top {
+      display: flex;
+      margin-bottom: 6px;
+    }
+
+    .desc {
+      text-align: center;
+      flex: 1;
+      width: 0;
+      padding: 4px;
+    }
+
+    .name {
+      margin-bottom: 4px;
+    }
+
+    .intro {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      min-height: 72px;
+    }
+  }
+}

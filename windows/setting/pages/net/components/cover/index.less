@@ -1,0 +1,20 @@
+.cover {
+  --width: 50%;
+  width: var(--width);
+  padding-bottom: calc(var(--width) / 3 * 4);
+  position: relative;
+
+  .cus-image, img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cus-image {
+    background: #fac07a;
+    writing-mode: vertical-lr;
+    color: #333;
+    text-align: center;
+    padding-left: 6px;
+  }
+}
