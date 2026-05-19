@@ -57,7 +57,7 @@ export default function Setting() {
   }
 
   const updateCurrent = (item: NovelItemCache) => {
-    cache.update("novel.last", filename(item.path))
+    cache.update("novel.last", filename(item.path)).then()
   }
 
   const buildConfigItem = useCallback((parent: string, item: InputItem) => {

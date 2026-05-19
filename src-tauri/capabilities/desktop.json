@@ -41,6 +41,7 @@
     "global-shortcut:allow-register-all",
     "global-shortcut:allow-unregister-all",
     "dialog:allow-open",
+    "notification:default",
     {
       "identifier": "fs:scope",
       "allow": [

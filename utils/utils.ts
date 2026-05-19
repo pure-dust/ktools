@@ -1,3 +1,6 @@
+import {config} from "~utils/config.ts";
+import {isPermissionGranted, Options, requestPermission, sendNotification} from "@tauri-apps/plugin-notification";
+
 type Handler = (target: object, key: string, newValue: object, oldValue: object) => void
 
 /**
@@ -88,4 +91,42 @@ export function equals(a: any, b: any): boolean {
   }
 
   return equal(a, b)
+}
+
+export function use_notification() {
+  const use_clock = config.get("app.use_clock");
+  let tick: NodeJS.Timeout | null = null
+
+  const task = () => {
+    tick = setInterval(() => {
+      send_notification({
+        title: "工作半小时提醒",
+        body: "您已经连续工作半小时啦，请停下来休息一下眼睛吧!"
+      }).then()
+    }, config.get("app.clock_time"))
+  }
+
+  if (use_clock) {
+    task()
+  }
+
+  config.on("app.use_clock", ([_target, _key, value]) => {
+    if (value && !tick) {
+      task()
+    } else if (tick) {
+      clearInterval(tick)
+      tick = null
+    }
+  })
+}
+
+export async function send_notification(option: Options) {
+  let permissionGranted = await isPermissionGranted();
+  if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === 'granted';
+  }
+  if (permissionGranted) {
+    sendNotification(option);
+  }
 }

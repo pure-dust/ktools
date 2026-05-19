@@ -142,6 +142,12 @@ export function Novel() {
   useEffect(() => {
     const initialize = async () => {
       visible.current = await currentWindow.isVisible()
+
+      currentWindow.onFocusChanged((event) => {
+        if (event.payload) {
+          visible.current = true
+        }
+      }).then()
       await init()
       setScale(await invoke<number>("get_dpi_scale") || 1)
       config.on('novel.font_color', ([_target, _key, color]) => {
@@ -240,6 +246,7 @@ export function Novel() {
       }
 
       invoke("start_mouse_wheel").then()
+
 
     }
 

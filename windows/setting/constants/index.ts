@@ -31,7 +31,10 @@ export const SETTING_CONFIG: ConfigItem[] = [
   {
     name: "应用",
     prop: "app",
-    items: [],
+    items: [
+      {name: "是否开启定时提醒", type: InputType.switch, prop: "use_clock"},
+      {name: "定时提醒间隔(ms)", type: InputType.number, prop: "clock_time"},
+    ],
   },
   {
     name: "主题",
@@ -106,18 +109,27 @@ export const useSetting = () => {
         })
       }
     }
-    setting[2].items[7].disabled = config.get('novel.use_autosize')
-    setting[2].items[8].disabled = config.get('novel.use_autosize')
+    setting[2].items[7].disabled = config.get('novel.use_autosize') ?? true
+    setting[2].items[8].disabled = config.get('novel.use_autosize') ?? true
+    setting[0].items[1].disabled = !config.get('app.use_clock')
+    console.log(config.get('app.use_clock'))
     setSetting([...setting])
-    const onChange = ([_target, _key, value]: [string, string, boolean]) => {
+    const onWindowChange = ([_target, _key, value]: [string, string, boolean]) => {
       setting[2].items[7].disabled = value
       setting[2].items[8].disabled = value
       setSetting([...setting])
     }
-    config.on('novel.use_autosize', onChange)
+
+    const onClockChange = ([_target, _key, value]: [string, string, boolean]) => {
+      setting[0].items[1].disabled = !value
+      setSetting([...setting])
+    }
+    config.on('novel.use_autosize', onWindowChange)
+    config.on('app.use_clock', onClockChange)
 
     return () => {
-      config.off('novel.use_autosize', onChange)
+      config.off('novel.use_autosize', onWindowChange)
+      config.off('app.use_clock', onClockChange)
     }
   }, []);
 

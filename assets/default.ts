@@ -1,5 +1,8 @@
 export default <Config>{
-  app: {},
+  app: {
+    use_clock: false,
+    clock_time: 30 * 30 * 1000
+  },
   theme: {},
   novel: {
     font_color: "#ffffff",

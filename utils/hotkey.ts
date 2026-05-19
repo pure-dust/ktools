@@ -73,7 +73,7 @@ class HotkeyManager extends Emitter {
     if (this.isInit) return
     await unregisterAll()
     for (const [key, value] of Object.entries(hotkeys)) {
-      config.on(`shortcut.${key}`, ([_, key, newVal]) => {
+      config.on(`shortcut.${key}`, ([_, _key, newVal]) => {
         this.update(key, newVal)
       })
       if (await this.register(key, value)) {
@@ -128,8 +128,12 @@ class HotkeyManager extends Emitter {
   }
 
   private async update(key: string, value: string) {
-    if (!this.hotkeys.has(key)) {
+    let oldValue = this.hotkeys.get(key)
+    if (!oldValue) {
       return false
+    }
+    if (await isRegistered(oldValue)) {
+      await unregister(oldValue)
     }
     if (await this.register(key, value)) {
       return this.hotkeys.set(key, value)

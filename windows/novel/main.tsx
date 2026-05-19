@@ -6,9 +6,11 @@ import {Novel} from "./pages/novel";
 import {hotkey} from "~utils/hotkey.ts";
 import {config} from "~utils/config.ts";
 import {pluginLoader} from "~utils/plugin.ts";
+import {use_notification} from "~utils/utils.ts";
 
 preload().then(async () => {
   await hotkey.init(config.get('shortcut'))
+  use_notification()
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Novel/>
   );

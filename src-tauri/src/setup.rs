@@ -62,6 +62,7 @@ fn create_novel(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     .shadow(false)
     .skip_taskbar(true)
     .always_on_top(true)
+        .focused(true)
     .build()
 }
 
