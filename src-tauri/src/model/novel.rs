@@ -9,6 +9,15 @@ use std::io::{BufRead, BufReader, Error};
 use std::path::Path;
 use std::sync::{Arc, Mutex, OnceLock};
 
+#[derive(Debug, Deserialize)]
+pub struct TooltipPayload {
+    pub name: String,
+    pub title: String,
+    pub chapter: usize,
+    pub len: usize,
+    pub line: usize,
+}
+
 #[derive(Deserialize)]
 pub struct NovelConfig {
     pub(crate) path: String,

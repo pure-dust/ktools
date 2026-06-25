@@ -1,5 +1,6 @@
 use crate::command::system::get_dpi_scale;
 use crate::model::config::AppConfig;
+use crate::model::novel::TooltipPayload;
 use std::fs::File;
 use std::os::windows::process::CommandExt;
 use std::process::Command;
@@ -16,15 +17,6 @@ use winapi::um::shellscalingapi::SetProcessDpiAwareness;
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 const PROCESS_SYSTEM_DPI_AWARE: u32 = 1;
-
-#[derive(Debug, serde::Deserialize)]
-struct TooltipPayload {
-    name: String,
-    title: String,
-    chapter: usize,
-    len: usize,
-    line: usize,
-}
 
 fn exec_command(command_str: &[&str]) {
     if cfg!(target_os = "windows") {
@@ -45,6 +37,16 @@ fn exec_command(command_str: &[&str]) {
 }
 
 fn create_novel(app: &AppHandle) -> tauri::Result<WebviewWindow> {
+    let config_path = app
+        .path()
+        .resolve("config.json", BaseDirectory::AppConfig)?;
+    let file = File::open(config_path)?;
+    let config: AppConfig = serde_json::from_reader(file)?;
+    let scale = get_dpi_scale() as f64;
+    let width = (config.novel.window_width.unwrap_or(400) as f64) * scale;
+    let height = (config.novel.font_size.unwrap_or(12) as f64) * scale;
+    println!("width: {}, height: {}", width, height);
+
     if let Some(novel) = app.get_webview_window("novel") {
         novel.show()?;
         novel.set_focus()?;
@@ -57,7 +59,7 @@ fn create_novel(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     )
     .fullscreen(false)
     .resizable(false)
-    .inner_size(400.0, 24.0)
+        .inner_size(width, height)
     .decorations(false)
     .transparent(true)
     .shadow(false)
@@ -258,27 +260,8 @@ fn set_dpi_awareness() {
 }
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    // set_dpi_awareness();
-
     let novel = create_novel(app.handle())?;
     novel.hide()?;
-    let config_path = app
-        .path()
-        .resolve("config.json", BaseDirectory::AppConfig)?;
-    let file = File::open(config_path);
-    match file {
-        Ok(file) => {
-            let config: AppConfig = serde_json::from_reader(file)?;
-            let scale = get_dpi_scale();
-            let width = config.novel.window_width.unwrap_or(400) as f32;
-            let font_size = config.novel.font_size.unwrap_or(12) as f32;
-
-            novel.set_size(PhysicalSize::new(width * scale, font_size * scale))?;
-        }
-        Err(_error) => {
-            novel.set_size(PhysicalSize::new(400.0, 24.0))?;
-        }
-    };
     let tray = build_tray(app)?;
 
     app.listen("change-tip", move |event| {

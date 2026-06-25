@@ -50,7 +50,7 @@ const updateCache = async () => {
   }
 }
 
-export function Novel() {
+function Novel() {
   const textRef = useRef<HTMLDivElement>(null)
   const [text, setText] = useState<string>(cache.get('novel.last'))
   const [color, setColor] = useState<string>(config.get('novel.font_color'))
@@ -64,18 +64,17 @@ export function Novel() {
     return getCurrentWindow()
   }, [])
 
-  const setWindowSize = () => {
+  const setWindowSize = async () => {
     if (!textRef.current) {
       return
     }
     let width = textRef.current.offsetWidth
     let height = textRef.current.offsetHeight
     if (useAutosize) {
-      currentWindow.setSize(new PhysicalSize(Math.ceil(width * scale), Math.ceil(height * scale))).then()
-    } else {
-      currentWindow.setSize(new PhysicalSize(width, height)).then()
+      width = Math.ceil(width * scale)
+      height = Math.ceil(height * scale)
     }
-
+    await currentWindow.setSize(new PhysicalSize(width, height))
   }
 
   const hotkeyCallback = useMemo(() => {
@@ -272,3 +271,5 @@ export function Novel() {
     </>
   )
 }
+
+export default Novel
