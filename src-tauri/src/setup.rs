@@ -1,3 +1,4 @@
+use crate::command::system::get_dpi_scale;
 use crate::model::config::AppConfig;
 use std::fs::File;
 use std::os::windows::process::CommandExt;
@@ -268,10 +269,11 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     match file {
         Ok(file) => {
             let config: AppConfig = serde_json::from_reader(file)?;
-            novel.set_size(PhysicalSize::new(
-                config.novel.window_width,
-                config.novel.window_height,
-            ))?;
+            let scale = get_dpi_scale();
+            let width = config.novel.window_width.unwrap_or(400) as f32;
+            let font_size = config.novel.font_size.unwrap_or(12) as f32;
+
+            novel.set_size(PhysicalSize::new(width * scale, font_size * scale))?;
         }
         Err(_error) => {
             novel.set_size(PhysicalSize::new(400.0, 24.0))?;

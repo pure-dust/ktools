@@ -27,7 +27,7 @@ pub struct Novel {
 static INSTANCE: OnceLock<Arc<Mutex<Novel>>> = OnceLock::new();
 
 impl Novel {
-    pub fn new() -> Arc<Mutex<Novel>> {
+    pub fn new() -> Arc<Mutex<Self>> {
         INSTANCE
             .get_or_init(|| {
                 Arc::new(Mutex::new(Novel {
