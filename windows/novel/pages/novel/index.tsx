@@ -159,7 +159,7 @@ function Novel() {
         setFontFamily(font)
       })
       config.on("novel.use_autosize", async ([_target, _key, use_autosize]) => {
-        setWindowSize()
+        setWindowSize().then()
         setUseAutosize(use_autosize)
       })
       config.on('novel.window_width', ([_target, _key, width]) => {
@@ -261,7 +261,7 @@ function Novel() {
     if (!useAutosize) {
       return
     }
-    setWindowSize()
+    setWindowSize().then()
   }, [fontSize, fontFamily, text]);
 
   return (

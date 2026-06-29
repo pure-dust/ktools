@@ -1,3 +1,22 @@
 .preview-page {
   color: #fff;
+
+  & > div {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    & > div:nth-child(1) {
+      width: 30%;
+    }
+
+    & > div:nth-child(2) {
+      flex: 1;
+      width: 0;
+      word-wrap: break-word;
+      white-space: wrap;
+      overflow: hidden;
+    }
+  }
 }

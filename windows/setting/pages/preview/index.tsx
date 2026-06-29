@@ -32,7 +32,7 @@ export default function Preview() {
       {
         fonts.map(ft => (
           <div className={ft} style={{display: "flex", fontFamily: ft}} key={ft} onClick={() => {
-            navigator.clipboard.writeText(ft)
+            navigator.clipboard.writeText(ft).then()
           }}>
             <div style={{width: 180}}>{ft}</div>
             <div>
