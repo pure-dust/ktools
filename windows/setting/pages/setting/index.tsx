@@ -140,7 +140,7 @@ export default function Setting() {
           <div className={filename(item.path) === filename(novelCache.last) ? 'cache-item active' : 'cache-item'}
                key={item.path} onClick={() => updateCurrent(item)}>
             <div className="cache-item-title" title={filename(item.path)}>{filename(item.path)}</div>
-            <div className="cache-item-content">{item.chapter}章{item.line}行</div>
+            <div className="cache-item-content">{item.chapter + 1}章{item.line + 1}行</div>
             <div className="cache-item-delete">
               <Button type={'danger'} size={'small'} onClick={(event) => {
                 setDeleteVisible(true)

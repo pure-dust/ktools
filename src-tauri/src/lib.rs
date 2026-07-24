@@ -40,5 +40,6 @@ mod tests {
         }
 
         println!("系统缩放为{}", get_dpi_scale());
+        assert_eq!(get_dpi_scale(), 1.0);
     }
 }

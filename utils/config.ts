@@ -51,44 +51,6 @@ export class ConfigManager<T> extends EventEmitter<any> {
     return ConfigManager.instance.get(file_name)!
   }
 
-  async update(key: string, value: any) {
-    let keys = key.split(".")
-    let p: any = this.config
-    let i = 0
-    while (i < keys.length - 1) {
-      p = p?.[keys[i]]
-      i++
-    }
-    p[keys.at(-1)!] = value
-  }
-
-  async destroy() {
-    await this.file?.close()
-  }
-
-  get<T>(key?: string) {
-    if (!key) {
-      return this.config as T
-    }
-    let keys = key.split(".")
-    let result: any = this.config
-    keys.forEach(k => {
-      result = result?.[k]
-    })
-    return result as T
-  }
-
-  async reload() {
-    await this.load_file()
-  }
-
-  async init() {
-    if (this.isInit) return
-    await this.load_file()
-    await this.register_event()
-    this.isInit = true
-  }
-
   private async write(is_default = false) {
     await this.file?.truncate()
     await this.file?.seek(0, 0)
@@ -139,6 +101,46 @@ export class ConfigManager<T> extends EventEmitter<any> {
       this.isSync = false
     })
   }
+
+  async update(key: string, value: any) {
+    let keys = key.split(".")
+    let p: any = this.config
+    let i = 0
+    while (i < keys.length - 1) {
+      p = p?.[keys[i]]
+      i++
+    }
+    p[keys.at(-1)!] = value
+  }
+
+  async destroy() {
+    await this.file?.close()
+  }
+
+  get<T>(key?: string) {
+    if (!key) {
+      return this.config as T
+    }
+    let keys = key.split(".")
+    let result: any = this.config
+    keys.forEach(k => {
+      result = result?.[k]
+    })
+    return result as T
+  }
+
+  async reload() {
+    await this.load_file()
+  }
+
+  async init() {
+    if (this.isInit) return
+    await this.load_file()
+    await this.register_event()
+    this.isInit = true
+  }
+
+
 }
 
 export const config = new ConfigManager<Config>("config.json", default_config)
