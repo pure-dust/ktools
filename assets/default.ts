@@ -12,6 +12,7 @@ export default <Config>{
     count: 20,
     use_scroll: true,
     use_autosize: true,
+    use_mouse_middle: true,
     window_width: 240,
     window_height: 20
   },

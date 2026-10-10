@@ -45,7 +45,6 @@ fn create_novel(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let scale = get_dpi_scale() as f64;
     let width = (config.novel.window_width.unwrap_or(400) as f64) * scale;
     let height = (config.novel.font_size.unwrap_or(12) as f64) * scale;
-    println!("width: {}, height: {}", width, height);
 
     if let Some(novel) = app.get_webview_window("novel") {
         novel.show()?;

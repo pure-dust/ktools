@@ -1,13 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -23,24 +18,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "~main/*": [
-        "windows/main/*"
-      ],
-      "~setting/*": [
-        "windows/setting/*"
-      ],
-      "~utils/*": [
-        "utils/*"
-      ],
-      "~components/*": [
-        "components/*"
-      ],
-      "~assets/*": [
-        "assets/*"
-      ],
-      "~styles/*": [
-        "styles/*"
-      ]
+      "~main/*": ["windows/main/*"],
+      "~setting/*": ["windows/setting/*"],
+      "~utils/*": ["utils/*"],
+      "~components/*": ["components/*"],
+      "~assets/*": ["assets/*"],
+      "~styles/*": ["styles/*"]
     }
   },
   "include": [

@@ -58,6 +58,7 @@ export const SETTING_CONFIG: ConfigItem[] = [
       {name: "每行字数", type: InputType.number, prop: "count"},
       {name: "是否启用鼠标滚轮翻页", type: InputType.switch, prop: "use_scroll"},
       {name: "是否启用窗口自适应", type: InputType.switch, prop: "use_autosize"},
+      {name: "是否启用鼠标中键", type: InputType.switch, prop: "use_mouse_middle"},
       {name: "窗口长度", type: InputType.number, prop: "window_width"},
       {name: "窗口高度", type: InputType.number, prop: "window_height"},
     ],
@@ -109,8 +110,8 @@ export const useSetting = () => {
         })
       }
     }
-    setting[2].items[7].disabled = config.get('novel.use_autosize') ?? true
     setting[2].items[8].disabled = config.get('novel.use_autosize') ?? true
+    setting[2].items[9].disabled = config.get('novel.use_autosize') ?? true
     setting[0].items[1].disabled = !config.get('app.use_clock')
     console.log(config.get('app.use_clock'))
     setSetting([...setting])

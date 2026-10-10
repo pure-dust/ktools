@@ -225,6 +225,9 @@ function Novel() {
       }).then()
 
       listen<void>("hide", async (_event) => {
+        if (!config.get<boolean>("novel.use_mouse_middle")) {
+          return
+        }
         if (await currentWindow.isVisible()) {
           await currentWindow.hide()
           visible.current = false
